@@ -1,33 +1,40 @@
-# Implementation Plan - Fix MemorySplashPage
+# Implementation Plan - Conditional Onboarding Flow
 
-The `MemorySplashPage` in `welcome_page.dart` has a syntax error (missing comma) and is not currently integrated into the app's navigation flow. This plan details the steps to fix the syntax error, clean up the code, and set it as the initial page.
+Implement a professional app entry flow that shows the Splash screen first, then conditionally shows Onboarding based on whether it's the user's first time, using `shared_preferences`.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> I will be setting `MemorySplashPage` as the initial page in `main.dart`. Please confirm if this is the desired behavior or if it should remain unused for now.
+> - I will be adding the `shared_preferences` package to your project.
+> - The logic will be: **Splash -> (Check Prefs) -> Onboarding (if new) or Home (if returning)**.
 
 ## Proposed Changes
+
+### [Dependencies]
+
+#### [MODIFY] [pubspec.yaml](file:///D:/Projects/flutter_projects/memory_ticket_app/pubspec.yaml)
+- Add `shared_preferences: ^2.5.2` (or latest stable compatible version).
 
 ### [Onboarding]
 
 #### [MODIFY] [welcome_page.dart](file:///D:/Projects/flutter_projects/memory_ticket_app/lib/features/onboarding/presentation/pages/welcome_page.dart)
-- Fix the syntax error (missing comma after `crossAxisAlignment`).
-- Remove unnecessary whitespace and mess in the `Column` widget.
-- Implement navigation to `HomePage` in `_handleGetStarted`.
-- Update `withOpacity` to `withValues` (if supported) or just clean up the warnings if possible.
+- Import `shared_preferences`.
+- Update `_handleGetStarted` to be asynchronous.
+- Implement logic to check `seenOnboarding` flag.
+- Navigate to `MemoryOnboardingPage` if `false`, otherwise `HomePage`.
 
-### [App Root]
-
-#### [MODIFY] [main.dart](file:///D:/Projects/flutter_projects/memory_ticket_app/lib/main.dart)
-- Import `MemorySplashPage`.
-- Set `MemorySplashPage` as the `home` widget in `MaterialApp`.
+#### [MODIFY] [onboarding_page.dart](file:///D:/Projects/flutter_projects/memory_ticket_app/lib/features/onboarding/presentation/pages/onboarding_page.dart)
+- Import `shared_preferences`.
+- Update `_handleNext` to be asynchronous.
+- On the final step, set `seenOnboarding` to `true` in preferences before navigating to `HomePage`.
 
 ## Verification Plan
 
 ### Automated Tests
-- Run `flutter analyze` to ensure no more syntax errors or warnings.
+- Run `flutter pub get` to verify dependency resolution.
+- Run `flutter analyze` to ensure no syntax errors.
 
 ### Manual Verification
-- Launch the app and verify that the `MemorySplashPage` is shown first.
-- Click "Get Started" and verify that it navigates to the `HomePage`.
+1. **Fresh Install**: Open app -> Splash -> Click Get Started -> Should see Onboarding.
+2. **Complete Onboarding**: Finish onboarding -> Should see Home.
+3. **Subsequent Launch**: Close app -> Open app -> Splash -> Click Get Started -> Should skip Onboarding and go straight to Home.

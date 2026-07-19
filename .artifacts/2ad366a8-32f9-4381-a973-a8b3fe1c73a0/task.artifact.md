@@ -1,10 +1,4 @@
-- [x] Fix `welcome_page.dart`
-    - [x] Fix syntax error (missing comma)
-    - [x] Clean up whitespace and formatting
-    - [x] Implement navigation to `HomePage` in `_handleGetStarted`
-- [x] Update `main.dart`
-    - [x] Import `MemorySplashPage`
-    - [x] Set `MemorySplashPage` as `home`
-- [ ] Verify changes
-    - [x] Run analysis
-    - [ ] Check app flow
+- [x] Update `pubspec.yaml` with `shared_preferences`
+- [x] Update `welcome_page.dart` (Splash) logic
+- [x] Update `onboarding_page.dart` logic
+- [x] Verify flow

@@ -13,12 +13,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: const Color(
-          0xFFF7F9FC,
-        ), // Premium light background
-        primaryColor: const Color(0xFF4E44E7),
-        fontFamily: 'sans-serif',
+        fontFamily: 'Inter',
+        scaffoldBackgroundColor: const Color(0xFFF8F9FD),
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF4D41DF),
+          surface: Color(0xFFF8F9FD),
+          onSurface: Color(0xFF191C1F),
+        ),
       ),
       home: const MemorySplashPage(),
     );

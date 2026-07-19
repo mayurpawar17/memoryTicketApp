@@ -15,3 +15,31 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+
+onboarding theme config
+
+```dart
+//onboarding theme config
+theme: ThemeData(
+fontFamily: 'Inter',
+scaffoldBackgroundColor: const Color(0xFFF8F9FD),
+colorScheme: const ColorScheme.light(
+primary: Color(0xFF4D41DF),
+surface: Color(0xFFF8F9FD),
+onSurface: Color(0xFF191C1F),
+),
+),
+```
+
+```dart
+//default theme config
+ theme: ThemeData(
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: const Color(
+          0xFFF7F9FC,
+        ), // Premium light background
+        primaryColor: const Color(0xFF4E44E7),
+        fontFamily: 'sans-serif',
+      ),
+```

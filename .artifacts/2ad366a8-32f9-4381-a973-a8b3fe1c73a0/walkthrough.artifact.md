@@ -1,27 +1,31 @@
-# Walkthrough - Fixed MemorySplashPage and Navigation
+# Walkthrough - Conditional Onboarding Flow
 
-I have fixed the issues in `MemorySplashPage` and integrated it as the starting point of the application.
+I have implemented a professional onboarding flow using `shared_preferences`. The app now remembers if a user has completed the onboarding and skips it on subsequent launches.
 
 ## Changes
+
+### [Dependencies]
+
+#### [pubspec.yaml](file:///D:/Projects/flutter_projects/memory_ticket_app/pubspec.yaml)
+- Added `shared_preferences: ^2.5.2` to manage persistent app state.
 
 ### [Onboarding]
 
 #### [welcome_page.dart](file:///D:/Projects/flutter_projects/memory_ticket_app/lib/features/onboarding/presentation/pages/welcome_page.dart)
-- Fixed a syntax error (missing comma after `crossAxisAlignment: CrossAxisAlignment.center`).
-- Cleaned up excessive whitespace and messy code structure in the main `Column`.
-- Implemented navigation logic: clicking "Get Started" now correctly navigates to the `HomePage` after the fade-out animation completes.
+- Updated the Splash screen's "Get Started" logic to be asynchronous.
+- Added a check for the `seen_onboarding` flag in `SharedPreferences`.
+- If the flag is set, it navigates directly to `HomePage`; otherwise, it proceeds to `MemoryOnboardingPage`.
 
-### [App Root]
-
-#### [main.dart](file:///D:/Projects/flutter_projects/memory_ticket_app/lib/main.dart)
-- Updated `MaterialApp` to use `MemorySplashPage` as the initial `home` widget.
-- Cleaned up unused imports and formatted the file.
+#### [onboarding_page.dart](file:///D:/Projects/flutter_projects/memory_ticket_app/lib/features/onboarding/presentation/pages/onboarding_page.dart)
+- Updated the "Start" button logic on the final onboarding screen.
+- It now sets the `seen_onboarding` flag to `true` in `SharedPreferences` before navigating to the `HomePage`.
 
 ## Verification Results
 
 ### Automated Tests
-- Ran `analyze_file` on both modified files. The syntax error is resolved, and the code now compiles correctly.
+- `flutter pub get` executed successfully.
+- `flutter analyze` shows that the new logic is syntactically correct and type-safe.
 
-### Manual Verification
-- The app now starts with the immersive `MemorySplashPage` 3D animation.
-- Pressing the "Get Started" button triggers a smooth transition to the main `HomePage`.
+### Manual Verification Path
+1. **First Launch**: Splash -> Get Started -> Onboarding Screens -> Home.
+2. **Subsequent Launches**: Splash -> Get Started -> Home.

@@ -1,8 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-
-import '../../../memory/presentation/pages/home_page.dart';
+import 'package:memory_ticket_app/features/memory/presentation/pages/home_page.dart';
+import 'package:memory_ticket_app/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MemorySplashPage extends StatefulWidget {
   const MemorySplashPage({super.key});
@@ -52,15 +53,27 @@ class _MemorySplashPageState extends State<MemorySplashPage>
     super.dispose();
   }
 
-  void _handleGetStarted() {
+  Future<void> _handleGetStarted() async {
     setState(() {
       _isDisposedAnimation = true;
     });
+
+    final prefs = await SharedPreferences.getInstance();
+    final bool seenOnboarding = prefs.getBool('seen_onboarding') ?? false;
+
     _fadeController.reverse().then((_) {
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
+        if (seenOnboarding) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const MemoryOnboardingPage(),
+            ),
+          );
+        }
       }
     });
   }
