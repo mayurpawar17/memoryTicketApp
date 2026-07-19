@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memory_ticket_app/features/memory/presentation/pages/home_screen.dart';
+import 'package:memory_ticket_app/features/onboarding/presentation/pages/welcome_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,6 +10,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: const HomeScreen());
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: const Color(
+          0xFFF7F9FC,
+        ), // Premium light background
+        primaryColor: const Color(0xFF4E44E7),
+        fontFamily: 'sans-serif',
+      ),
+      home: const MemorySplashPage(),
+    );
   }
 }
