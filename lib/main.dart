@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -8,8 +9,12 @@ import 'package:memory_ticket_app/features/onboarding/presentation/pages/onboard
 import 'package:memory_ticket_app/injection_container.dart' as di;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'firebase_options.dart';
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // Keep the splash screen until initialization is complete
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 

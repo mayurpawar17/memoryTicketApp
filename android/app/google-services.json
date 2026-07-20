@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "999686056487",
+    "project_id": "memory-ticket-app-940da",
+    "storage_bucket": "memory-ticket-app-940da.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999686056487:android:9f1140225d0295a452bc02",
+        "android_client_info": {
+          "package_name": "com.example.memory_ticket_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBF5ptAgPU76dtJz4pkIkuxWceJMrakB6c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
