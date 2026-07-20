@@ -8,7 +8,8 @@ class AppColors {
   ); // Lighter gray for cards
 
   // Neon/Vibrant Accents for high contrast on black
-  static const Color primary = Color(0xFF00E6FF); // Electric Cyan
+  static const Color primary = Color(0xFF7B5BF6); // Electric Yellow
+  // static const Color primary = Color(0xFFDCFF00); // Electric Yellow
   static const Color secondary = Color(0xFF7B5BF6); // Deep Purple
   static const Color error = Color(0xFFFF453A); // Vivid Red
 

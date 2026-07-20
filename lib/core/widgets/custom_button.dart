@@ -3,13 +3,13 @@ import 'package:memory_ticket_app/core/colors/app_colors.dart';
 
 import 'app_spacing.dart';
 
-class AmoledButton extends StatelessWidget {
+class CustomButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
   final bool isOutlined;
   final IconData? icon;
 
-  const AmoledButton({
+  const CustomButton({
     super.key,
     required this.label,
     required this.onPressed,
@@ -29,7 +29,9 @@ class AmoledButton extends StatelessWidget {
         vertical: AppSpacing.md,
         horizontal: AppSpacing.lg,
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
       elevation: 0,
     );
 
@@ -37,15 +39,15 @@ class AmoledButton extends StatelessWidget {
       return ElevatedButton.icon(
         style: buttonStyle,
         onPressed: onPressed,
-        icon: Icon(icon, size: 20),
-        label: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        icon: Icon(icon, size: 20, color: Colors.white),
+        label: Text(label, style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.white)),
       );
     }
 
     return ElevatedButton(
       style: buttonStyle,
       onPressed: onPressed,
-      child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+      child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.white)),
     );
   }
 }

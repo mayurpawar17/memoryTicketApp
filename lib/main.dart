@@ -12,7 +12,11 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final bool seenOnboarding = prefs.getBool('seen_onboarding') ?? false;
 
-  runApp(MyApp(initialHome: seenOnboarding ? const HomePage() : const OnboardingPage()));
+  runApp(
+    MyApp(
+      initialHome: seenOnboarding ? const HomePage() : const OnboardingPage(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {

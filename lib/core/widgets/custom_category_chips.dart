@@ -1,47 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:memory_ticket_app/core/colors/app_colors.dart';
 
-class CategoryChips extends StatefulWidget {
-  const CategoryChips({super.key});
+class CustomCategoryChips extends StatelessWidget {
+  /// The list of strings to display as chips
+  final List<String> categories;
 
-  @override
-  State<CategoryChips> createState() => _CategoryChipsState();
-}
+  /// The currently active index matching the parent's state
+  final int selectedIndex;
 
-class _CategoryChipsState extends State<CategoryChips> {
-  final List<String> _categories = [
-    'All',
-    'Travel',
-    'Food',
-    'Friends',
-    'Nature',
-    'Work',
-    'Family',
-    'Pets',
-  ];
-  int _selectedIndex = 0;
+  /// Callback function triggered whenever a new chip is selected
+  final ValueChanged<int> onSelected;
+
+  /// Horizontal padding for the start and end of the scrollable list
+  final double horizontalPadding;
+
+  const CustomCategoryChips({
+    super.key,
+    required this.categories,
+    required this.selectedIndex,
+    required this.onSelected,
+    this.horizontalPadding = 20.0,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return SizedBox(
-      height: 48,
+      height: 50,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        itemCount: _categories.length,
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        itemCount: categories.length,
         itemBuilder: (context, index) {
-          final isSelected = _selectedIndex == index;
+          final isSelected = selectedIndex == index;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: ChoiceChip(
-              label: Text(_categories[index]),
+              label: Text(categories[index]),
               selected: isSelected,
               onSelected: (bool selected) {
-                setState(() {
-                  _selectedIndex = selected ? index : _selectedIndex;
-                });
+                if (selected) {
+                  onSelected(index);
+                }
               },
-              selectedColor: theme.colorScheme.primary,
+              selectedColor: AppColors.primary,
               backgroundColor: theme.colorScheme.surface,
               labelStyle: TextStyle(
                 color: isSelected

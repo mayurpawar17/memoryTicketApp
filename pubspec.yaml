@@ -21,6 +21,7 @@ dependencies:
 #  share_plus: ^13.2.1
   google_fonts: ^8.2.0
   flutter_svg: ^2.3.0
+  font_awesome_flutter: ^11.0.0
 
 dev_dependencies:
   flutter_test:
@@ -35,12 +36,12 @@ flutter:
 
 flutter_native_splash:
   color: "#4D41DF"
-  image: assets/splash.png
+  image: assets/app_icon.png
   android_gravity: fill
   ios_content_mode: scaleAspectFill
   
   android_12:
-    image: assets/splash.png
+    image: assets/app_icon.png
     icon_background_color: "#4D41DF"
   
   fullscreen: true
@@ -48,10 +49,10 @@ flutter_native_splash:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: false
-  image_path: "assets/splash.png"
+  image_path: "assets/app_icon.png"
   min_sdk_android: 21
   adaptive_icon_background: "#4D41DF"
-  adaptive_icon_foreground: "assets/splash.png"
+  adaptive_icon_foreground: "assets/app_icon.png"
 
   
   
