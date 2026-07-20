@@ -19,7 +19,7 @@ void main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await di.init();
-
+fl
   final prefs = await SharedPreferences.getInstance();
   final bool seenOnboarding = prefs.getBool('seen_onboarding') ?? false;
 

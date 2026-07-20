@@ -1,4 +1,4 @@
-package com.example.memory_ticket_app
+package com.devmayur.memoryticket
 
 import io.flutter.embedding.android.FlutterActivity
 

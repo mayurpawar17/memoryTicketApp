@@ -53,10 +53,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBF5ptAgPU76dtJz4pkIkuxWceJMrakB6c',
-    appId: '1:999686056487:android:9f1140225d0295a452bc02',
-    messagingSenderId: '999686056487',
-    projectId: 'memory-ticket-app-940da',
-    storageBucket: 'memory-ticket-app-940da.firebasestorage.app',
+    apiKey: 'AIzaSyDeX4S6FVTjcjil-EIQSbhqrFEX7_faFXY',
+    appId: '1:1022849536703:android:3ad2f13093e17fa881ac0a',
+    messagingSenderId: '1022849536703',
+    projectId: 'memory-ticket-app-49866',
+    storageBucket: 'memory-ticket-app-49866.firebasestorage.app',
   );
 }
