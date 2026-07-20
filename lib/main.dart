@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.dart';
+import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_event.dart';
 import 'package:memory_ticket_app/features/memory/presentation/pages/home_page.dart';
 import 'package:memory_ticket_app/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:memory_ticket_app/injection_container.dart' as di;
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -9,12 +13,19 @@ void main() async {
   // Keep the splash screen until initialization is complete
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
+  await di.init();
+
   final prefs = await SharedPreferences.getInstance();
   final bool seenOnboarding = prefs.getBool('seen_onboarding') ?? false;
 
   runApp(
-    MyApp(
-      initialHome: seenOnboarding ? const HomePage() : const OnboardingPage(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => di.sl<MemoryBloc>()..add(LoadMemories())),
+      ],
+      child: MyApp(
+        initialHome: seenOnboarding ? const HomePage() : const OnboardingPage(),
+      ),
     ),
   );
 }

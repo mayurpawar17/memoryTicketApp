@@ -1,4 +1,0 @@
-- [x] Update `pubspec.yaml` with `shared_preferences`
-- [x] Update `welcome_page.dart` (Splash) logic
-- [x] Update `onboarding_page.dart` logic
-- [x] Verify flow

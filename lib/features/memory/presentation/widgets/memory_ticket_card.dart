@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class MemoryTicketCard extends StatelessWidget {
-  final String imageUrl;
+  final String imagePath;
   final String title;
   final String location;
   final String date;
@@ -13,7 +15,7 @@ class MemoryTicketCard extends StatelessWidget {
 
   const MemoryTicketCard({
     super.key,
-    required this.imageUrl,
+    required this.imagePath,
     required this.title,
     required this.location,
     required this.date,
@@ -65,12 +67,7 @@ class MemoryTicketCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                             child: AspectRatio(
                               aspectRatio: 1,
-                              child: Image.network(
-                                imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) =>
-                                    Container(color: Colors.grey[200]),
-                              ),
+                              child: _buildImage(),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -206,11 +203,33 @@ class MemoryTicketCard extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildImage() {
+    if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => Container(color: Colors.grey[200]),
+      );
+    } else if (imagePath.isNotEmpty) {
+      return Image.file(
+        File(imagePath),
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => Container(color: Colors.grey[200]),
+      );
+    } else {
+      return Container(
+        color: Colors.grey[200],
+        child: const Icon(Icons.image, color: Colors.grey),
+      );
+    }
+  }
 }
 
 /// Precise pathing matrix to construct physical top/bottom perforation cuts
 class StampTicketClipper extends CustomClipper<Path> {
   final double sidePunchYRatio;
+
   const StampTicketClipper({required this.sidePunchYRatio});
 
   @override
