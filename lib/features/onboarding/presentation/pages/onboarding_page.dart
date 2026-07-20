@@ -5,14 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../memory/presentation/pages/home_page.dart';
 
-class MemoryOnboardingPage extends StatefulWidget {
-  const MemoryOnboardingPage({super.key});
+class OnboardingPage extends StatefulWidget {
+  const OnboardingPage({super.key});
 
   @override
-  State<MemoryOnboardingPage> createState() => _MemoryOnboardingPageState();
+  State<OnboardingPage> createState() => _OnboardingPageState();
 }
 
-class _MemoryOnboardingPageState extends State<MemoryOnboardingPage> {
+class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
   final int _totalScreens = 3;
