@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -6,6 +8,7 @@ import 'package:memory_ticket_app/features/memory/domain/entities/memory.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_event.dart';
 import 'package:memory_ticket_app/features/memory/presentation/pages/edit_memory_ticket_page.dart';
+import 'package:memory_ticket_app/features/memory/presentation/services/ticket_export_service.dart';
 import '../widgets/memory_ticket_card.dart';
 
 class MemoryTicketDetailsScreen extends StatefulWidget {
@@ -19,6 +22,7 @@ class MemoryTicketDetailsScreen extends StatefulWidget {
 
 class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
   late Memory _memory;
+  final GlobalKey _ticketKey = GlobalKey();
 
   @override
   void initState() {
@@ -55,9 +59,27 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
     );
   }
 
+  Future<void> _handleExport(Future<void> Function(GlobalKey, Memory) exportMethod) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Processing ticket..."),
+        duration: Duration(seconds: 1),
+      ),
+    );
+    try {
+      await exportMethod(_ticketKey, _memory);
+    } catch (e) {
+      if (mounted) {
+        log("memoryTicketDetailsPage : ${e}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Export failed: $e")),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Defines where the ticket cuts out horizontally (69% down the canvas)
     return Scaffold(
       appBar: CustomAppBar(title: "Ticket Stub"),
       body: SafeArea(
@@ -65,50 +87,58 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
           children: [
             const Spacer(),
 
-            MemoryTicketCard(
-              imagePath: _memory.imagePath,
-              title: _memory.title,
-              location: _memory.location,
-              date: _memory.date,
-              description: _memory.description,
-              isFavorite: _memory.isFavorite,
-              onFavorite: () {
-                context.read<MemoryBloc>().add(
-                      ToggleFavoriteEvent(_memory.id, !_memory.isFavorite),
+            // Wrap the ticket card in RepaintBoundary for rasterization
+            RepaintBoundary(
+              key: _ticketKey,
+              child: MemoryTicketCard(
+                imagePath: _memory.imagePath,
+                title: _memory.title,
+                location: _memory.location,
+                date: _memory.date,
+                description: _memory.description,
+                isFavorite: _memory.isFavorite,
+                onFavorite: () {
+                  context.read<MemoryBloc>().add(
+                        ToggleFavoriteEvent(_memory.id, !_memory.isFavorite),
+                      );
+                  setState(() {
+                    _memory = Memory(
+                      id: _memory.id,
+                      title: _memory.title,
+                      description: _memory.description,
+                      location: _memory.location,
+                      date: _memory.date,
+                      imagePath: _memory.imagePath,
+                      category: _memory.category,
+                      isFavorite: !_memory.isFavorite,
                     );
-                setState(() {
-                  _memory = Memory(
-                    id: _memory.id,
-                    title: _memory.title,
-                    description: _memory.description,
-                    location: _memory.location,
-                    date: _memory.date,
-                    imagePath: _memory.imagePath,
-                    category: _memory.category,
-                    isFavorite: !_memory.isFavorite,
-                  );
-                });
-              },
+                  });
+                },
+              ),
             ),
             const Spacer(),
 
-            // --- Premium Action Control Row ---
+            // --- Action Control Row ---
             Padding(
               padding: const EdgeInsets.only(bottom: 32.0, left: 40, right: 40),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Download Button
+                  // Share Button (Ultra-HD Image)
                   IconButton(
+                    tooltip: "Share Ticket Image",
                     icon: const FaIcon(
-                      FontAwesomeIcons.download,
+                      FontAwesomeIcons.shareNodes,
                       size: 26,
                       color: Colors.black26,
                     ),
-                    onPressed: () {},
+                    onPressed: () =>
+                        _handleExport(TicketExportService.shareAsImage),
                   ),
 
+                  // Edit Button
                   IconButton(
+                    tooltip: "Edit Ticket",
                     icon: const Icon(
                       Icons.edit,
                       size: 26,
@@ -128,7 +158,10 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
                       }
                     },
                   ),
+
+                  // Delete Button
                   IconButton(
+                    tooltip: "Delete Ticket",
                     icon: const Icon(
                       Icons.delete,
                       size: 26,
@@ -137,14 +170,22 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
                     onPressed: () => _showDeleteDialog(context),
                   ),
 
-                  // Share Button
+                  // Ultra-HD Info Button
                   IconButton(
-                    icon: const FaIcon(
-                      FontAwesomeIcons.share,
+                    tooltip: "Export Info",
+                    icon: const Icon(
+                      Icons.hd_outlined,
                       size: 26,
                       color: Colors.black26,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              "Ultra-HD image export (4.0x DPI) is active for crisp sharing."),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
