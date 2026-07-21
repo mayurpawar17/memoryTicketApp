@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_state.dart';
 import 'package:memory_ticket_app/features/auth/presentation/pages/login_page.dart';
 
 import 'package:memory_ticket_app/features/auth/presentation/pages/profile_page.dart';
+import 'package:memory_ticket_app/features/memory/presentation/widgets/sync_button.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
@@ -55,27 +57,28 @@ class HomeHeader extends StatelessWidget {
                   },
                   child: CircleAvatar(
                     radius: 24,
+                    backgroundColor: Colors.grey[200],
                     backgroundImage: state.user.photoUrl != null
                         ? NetworkImage(state.user.photoUrl!)
-                        : const AssetImage('assets/app_icon.png') as ImageProvider,
+                        : null,
+                    child: state.user.photoUrl == null
+                        ? SvgPicture.asset(
+                            'assets/profileIcon.svg',
+                            width: 24,
+                            height: 24,
+                          )
+                        : null,
                   ),
                 );
               }
-              return OutlinedButton.icon(
+              return SyncButton(
+                isCompact: true,
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const LoginPage()),
                   );
                 },
-                icon: const Icon(Icons.sync, size: 18),
-                label: const Text('Backup & Sync'),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
               );
             },
           ),

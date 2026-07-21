@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_event.dart';
 import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_state.dart';
@@ -8,6 +9,7 @@ import 'package:memory_ticket_app/features/auth/presentation/widgets/auth_button
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_event.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_state.dart';
+import 'package:memory_ticket_app/features/memory/presentation/widgets/sync_button.dart';
 import '../../domain/entities/user_entity.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -75,9 +77,17 @@ class ProfilePage extends StatelessWidget {
                   const SizedBox(height: 20),
                   CircleAvatar(
                     radius: 60,
+                    backgroundColor: Colors.grey[200],
                     backgroundImage: user.photoUrl != null
                         ? NetworkImage(user.photoUrl!)
-                        : const AssetImage('assets/app_icon.png') as ImageProvider,
+                        : null,
+                    child: user.photoUrl == null
+                        ? SvgPicture.asset(
+                            'assets/profileIcon.svg',
+                            width: 60,
+                            height: 60,
+                          )
+                        : null,
                   ),
                   const SizedBox(height: 24),
                   Text(
@@ -89,19 +99,7 @@ class ProfilePage extends StatelessWidget {
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
                   const Spacer(),
-                  BlocBuilder<MemoryBloc, MemoryState>(
-                    builder: (context, memoryState) {
-                      return AuthButton(
-                        text: 'Backup & Sync',
-                        color: Theme.of(context).primaryColor.withOpacity(0.1),
-                        textColor: Theme.of(context).primaryColor,
-                        isLoading: memoryState is MemorySyncing,
-                        onPressed: () {
-                          context.read<MemoryBloc>().add(SyncMemoriesEvent());
-                        },
-                      );
-                    },
-                  ),
+                  const SyncButton(),
                   const SizedBox(height: 16),
                   AuthButton(
                     text: 'Logout',

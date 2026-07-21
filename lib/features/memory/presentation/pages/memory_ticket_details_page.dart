@@ -35,12 +35,18 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Text("Delete Memory"),
-          content: const Text("Are you sure you want to delete this memory?"),
+          content: const Text(
+            "Are you sure you want to delete this memory? This action cannot be undone and will also remove it from cloud storage.",
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text("Cancel"),
+              child: const Text(
+                "Cancel",
+                style: TextStyle(color: Colors.grey),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -50,7 +56,10 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
               },
               child: const Text(
                 "Delete",
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -98,6 +107,7 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
                 description: _memory.description,
                 isFavorite: _memory.isFavorite,
                 ticketType: _memory.ticketType,
+                heroTag: 'memory_image_${_memory.id}',
                 onFavorite: () {
                   context.read<MemoryBloc>().add(
                         ToggleFavoriteEvent(_memory.id, !_memory.isFavorite),

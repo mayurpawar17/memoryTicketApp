@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class GoogleButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -20,7 +20,11 @@ class GoogleButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         icon: isLoading
             ? const SizedBox.shrink()
-            : const FaIcon(FontAwesomeIcons.google, color: Colors.red, size: 20),
+            : SvgPicture.asset(
+                'assets/googleIcon.svg',
+                height: 20,
+                width: 20,
+              ),
         label: isLoading
             ? const SizedBox(
                 height: 24,

@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:memory_ticket_app/core/widgets/custom_app_bar.dart';
 import 'package:memory_ticket_app/core/widgets/custom_button.dart';
+import 'package:memory_ticket_app/core/utils/category_utils.dart';
 import 'package:memory_ticket_app/features/memory/domain/entities/memory.dart';
 import 'package:memory_ticket_app/features/memory/domain/entities/ticket_type.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.dart';
@@ -475,7 +476,17 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
               .map(
                 (String val) => DropdownMenuItem(
                   value: val,
-                  child: Text(val, style: const TextStyle(fontSize: 14)),
+                  child: Row(
+                    children: [
+                      Icon(
+                        CategoryUtils.getIcon(val),
+                        size: 18,
+                        color: Colors.black54,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(val, style: const TextStyle(fontSize: 14)),
+                    ],
+                  ),
                 ),
               )
               .toList(),

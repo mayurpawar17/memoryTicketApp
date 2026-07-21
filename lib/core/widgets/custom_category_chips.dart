@@ -5,6 +5,9 @@ class CustomCategoryChips extends StatelessWidget {
   /// The list of strings to display as chips
   final List<String> categories;
 
+  /// Optional list of icons corresponding to each category
+  final List<IconData>? icons;
+
   /// The currently active index matching the parent's state
   final int selectedIndex;
 
@@ -19,6 +22,7 @@ class CustomCategoryChips extends StatelessWidget {
     required this.categories,
     required this.selectedIndex,
     required this.onSelected,
+    this.icons,
     this.horizontalPadding = 20.0,
   });
 
@@ -34,9 +38,18 @@ class CustomCategoryChips extends StatelessWidget {
         itemCount: categories.length,
         itemBuilder: (context, index) {
           final isSelected = selectedIndex == index;
+          final icon = icons != null && icons!.length > index ? icons![index] : null;
+
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: ChoiceChip(
+              avatar: icon != null
+                  ? Icon(
+                      icon,
+                      size: 16,
+                      color: isSelected ? Colors.white : theme.primaryColor,
+                    )
+                  : null,
               label: Text(categories[index]),
               selected: isSelected,
               onSelected: (bool selected) {

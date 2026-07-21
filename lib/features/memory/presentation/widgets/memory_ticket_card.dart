@@ -15,6 +15,7 @@ class MemoryTicketCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onFavorite;
   final VoidCallback? onMore;
+  final String? heroTag;
 
   const MemoryTicketCard({
     super.key,
@@ -28,6 +29,7 @@ class MemoryTicketCard extends StatelessWidget {
     this.onTap,
     this.onFavorite,
     this.onMore,
+    this.heroTag,
   });
 
   @override
@@ -68,11 +70,14 @@ class MemoryTicketCard extends StatelessWidget {
                         children: [
                           Stack(
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: AspectRatio(
-                                  aspectRatio: 1,
-                                  child: _buildImage(),
+                              Hero(
+                                tag: heroTag ?? 'memory_image_${title}_$date',
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: AspectRatio(
+                                    aspectRatio: 1,
+                                    child: _buildImage(),
+                                  ),
                                 ),
                               ),
                               if (config.mainIcon != null)
