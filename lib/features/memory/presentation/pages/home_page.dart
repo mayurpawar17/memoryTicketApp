@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_event.dart';
@@ -17,6 +18,7 @@ import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_state.dar
 
 import 'package:memory_ticket_app/features/memory/presentation/pages/timeline_page.dart';
 import 'package:memory_ticket_app/features/memory/presentation/pages/map_page.dart';
+import 'package:memory_ticket_app/features/memory/presentation/pages/favorites_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -59,12 +61,23 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(width: 12),
             // Map Button
+            // _buildCircularButton(
+            //   context,
+            //   icon: Icons.map_rounded,
+            //   onTap: () => Navigator.push(
+            //     context,
+            //     MaterialPageRoute(builder: (_) => const MapPage()),
+            //   ),
+            // ),
+            const SizedBox(width: 12),
+            // Favorites Button
             _buildCircularButton(
               context,
-              icon: Icons.map_rounded,
+              icon: Icons.favorite_rounded,
+              iconColor: Colors.redAccent,
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const MapPage()),
+                MaterialPageRoute(builder: (_) => const FavoritesPage()),
               ),
             ),
             const SizedBox(width: 12),
@@ -158,31 +171,32 @@ class _HomePageState extends State<HomePage> {
                   const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
                   // Recent Section Header Row
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 8.0,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Recent Memories',
-                              style: theme.textTheme.titleLarge),
-                          TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              'See All',
-                              style: TextStyle(
-                                color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.bold,
+                  if (state is MemoryLoaded && state.memories.isNotEmpty)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24.0,
+                          vertical: 8.0,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Recent Memories',
+                                style: theme.textTheme.titleLarge),
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                'See All',
+                                style: TextStyle(
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
 
                   if (state is MemoryLoading)
                     const SliverToBoxAdapter(
@@ -202,13 +216,9 @@ class _HomePageState extends State<HomePage> {
                               .toList();
 
                       if (filteredMemories.isEmpty) {
-                        return const SliverToBoxAdapter(
-                          child: Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 40.0),
-                              child: Text('No memories in this category.'),
-                            ),
-                          ),
+                        return _buildEmptyState(
+                          context,
+                          isFilter: state.memories.isNotEmpty,
                         );
                       }
 
@@ -249,7 +259,8 @@ class _HomePageState extends State<HomePage> {
                   else
                     const SliverToBoxAdapter(child: SizedBox.shrink()),
 
-                  const SliverToBoxAdapter(child: SizedBox(height: 100)),
+                  if (state is! MemoryLoaded || state.memories.isNotEmpty)
+                    const SliverToBoxAdapter(child: SizedBox(height: 100)),
                 ],
               );
             },
@@ -259,8 +270,83 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildEmptyState(BuildContext context, {required bool isFilter}) {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isFilter
+                      ? Icons.search_off_rounded
+                      : Icons.auto_awesome_rounded,
+                  size: 64,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                isFilter ? 'No memories found' : 'Start Your Journey',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                isFilter
+                    ? 'We couldn\'t find any memories in this category.'
+                    : 'Capture and cherish your special moments. Create your first memory ticket now!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey[600],
+                  height: 1.5,
+                ),
+              ),
+              if (!isFilter) ...[
+                const SizedBox(height: 32),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const NewMemoryTicketPage()),
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text('Create New Memory'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 28, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 2,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildCircularButton(BuildContext context,
-      {required IconData icon, required VoidCallback onTap}) {
+      {required IconData icon, Color? iconColor, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -278,7 +364,7 @@ class _HomePageState extends State<HomePage> {
           ],
           border: Border.all(color: Colors.grey[200]!),
         ),
-        child: Icon(icon, color: Colors.black87),
+        child: Icon(icon, color: iconColor ?? Colors.black87),
       ),
     );
   }

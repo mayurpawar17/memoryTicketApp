@@ -43,7 +43,6 @@ class UploadPlaceholder extends StatelessWidget {
         highlightColor: theme.colorScheme.primary.withOpacity(0.02),
         child: Container(
           width: double.infinity,
-          height: imagePath != null ? 200 : null,
           padding: imagePath != null
               ? EdgeInsets.zero
               : const EdgeInsets.symmetric(vertical: 36, horizontal: 16),
@@ -59,7 +58,6 @@ class UploadPlaceholder extends StatelessWidget {
             borderRadius: borderRadius,
             child: imagePath != null
                 ? Stack(
-                    fit: StackFit.expand,
                     children: [
                       _buildImage(),
                       Positioned(
@@ -129,13 +127,11 @@ class UploadPlaceholder extends StatelessWidget {
     if (imagePath!.startsWith('http')) {
       return Image.network(
         imagePath!,
-        fit: BoxFit.cover,
         errorBuilder: (_, _, _) => Container(color: Colors.grey[200]),
       );
     } else {
       return Image.file(
         File(imagePath!),
-        fit: BoxFit.cover,
         errorBuilder: (_, _, _) => Container(color: Colors.grey[200]),
       );
     }

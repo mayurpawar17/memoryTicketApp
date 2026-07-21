@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -454,10 +455,7 @@ class TimelineMemoryCard extends StatelessWidget {
               tag: 'memory_image_${memory.id}',
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                child: AspectRatio(
-                  aspectRatio: 1.8,
-                  child: _buildImage(memory.imagePath),
-                ),
+                child: _buildImage(memory.imagePath),
               ),
             ),
             Padding(
@@ -537,7 +535,28 @@ class TimelineMemoryCard extends StatelessWidget {
 
   Widget _buildImage(String imagePath) {
     if (imagePath.startsWith('http')) {
-      return Image.network(imagePath, fit: BoxFit.cover);
+      return CachedNetworkImage(
+        imageUrl: imagePath,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        placeholder: (context, url) => Container(
+          color: Colors.grey[50],
+          alignment: Alignment.center,
+          child: const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.black12,
+            ),
+          ),
+        ),
+        errorWidget: (context, url, error) => Container(
+          color: Colors.grey[50],
+          width: double.infinity,
+          child: const Icon(Icons.error_outline, size: 20, color: Colors.black26),
+        ),
+      );
     } else if (imagePath.isNotEmpty) {
       return Image.file(
         File(imagePath),

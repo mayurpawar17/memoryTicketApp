@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -278,9 +279,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                     ),
                     Center(
-                      child: Image.network(
-                        'https://lh3.googleusercontent.com/aida-public/AB6AXuC8EIVvtBFLRXVf9r9s59wptRMPsHlhO0vWBedJewW4i4IPfgUzI9whYEJ3tM4HP6Uh5xYwpUEf-UgEVhILAMJeMWbDwhPMBWUQQaMXHMlJrMTBwwUatpMwinlCe27anoeuNeKMxdx2F6UokexDfPVw1W0FOukBImIPxLYakH0rCXnBf55u1638O_F2IxI65j-07QjxQ08zf8bWqC9Xs26HCJM1K-PIQMJ2KbD644Xm3ejl2b7VjJDN5w',
+                      child: CachedNetworkImage(
+                        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC8EIVvtBFLRXVf9r9s59wptRMPsHlhO0vWBedJewW4i4IPfgUzI9whYEJ3tM4HP6Uh5xYwpUEf-UgEVhILAMJeMWbDwhPMBWUQQaMXHMlJrMTBwwUatpMwinlCe27anoeuNeKMxdx2F6UokexDfPVw1W0FOukBImIPxLYakH0rCXnBf55u1638O_F2IxI65j-07QjxQ08zf8bWqC9Xs26HCJM1K-PIQMJ2KbD644Xm3ejl2b7VjJDN5w',
                         fit: BoxFit.contain,
+                        placeholder: (context, url) => const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black12),
+                        ),
                       ),
                     ),
                   ],
@@ -398,9 +404,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         ),
                       ],
                     ),
-                    child: Image.network(
-                      'https://lh3.googleusercontent.com/aida-public/AB6AXuDK0_-csOP8prziLQAe5ypmJqwgmGYt7hDCQAchA31EybmEe6eKxHLOmtCqwZM8XwjX-623PQl0OrEzX93bsckSuPHxx2qpx2Iw4Ys9syy7Hi3FczJ4YWnLvB1eubbJvXie_TDh73GIpn3wIrygVjG4zPAMnSJuc86J1jEZxGCUpGrD10eCvgLLHkSZYjamnlAAo-DdHIeWgINLGTbLDPl9Kzh2EDHkAjydAlss5Ar7xHiQxU3LUOVcCA',
+                    child: CachedNetworkImage(
+                      imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDK0_-csOP8prziLQAe5ypmJqwgmGYt7hDCQAchA31EybmEe6eKxHLOmtCqwZM8XwjX-623PQl0OrEzX93bsckSuPHxx2qpx2Iw4Ys9syy7Hi3FczJ4YWnLvB1eubbJvXie_TDh73GIpn3wIrygVjG4zPAMnSJuc86J1jEZxGCUpGrD10eCvgLLHkSZYjamnlAAo-DdHIeWgINLGTbLDPl9Kzh2EDHkAjydAlss5Ar7xHiQxU3LUOVcCA',
                       fit: BoxFit.cover,
+                      placeholder: (context, url) => const Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black12),
+                        ),
+                      ),
                     ),
                   ),
                   Container(
@@ -515,9 +528,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(48),
-                  child: Image.network(
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuBIgh2pln-Xear5r1dCf5hQ57GpGrJ80rqu278g6mchN8tQRSAbg1xVqJ8-dUD_WoK7mDKIsAZDxJBIJ1iTSPhsmKWNWB8szSXbGXlYPTEkxlOWc2yapUzHbXRrl4lUcCrRKsP4X8S-_g654uMIn-0aLVz4aVrn5y9qTRlzl0ch6UmCOh6CMtKH6qO4qs4HhQfIJM6Q2yg-U36zJHB-e5x-_uu6nYhJVctQLu16Rq4Gt7y5CwlwcDRbGA',
+                  child: CachedNetworkImage(
+                    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBIgh2pln-Xear5r1dCf5hQ57GpGrJ80rqu278g6mchN8tQRSAbg1xVqJ8-dUD_WoK7mDKIsAZDxJBIJ1iTSPhsmKWNWB8szSXbGXlYPTEkxlOWc2yapUzHbXRrl4lUcCrRKsP4X8S-_g654uMIn-0aLVz4aVrn5y9qTRlzl0ch6UmCOh6CMtKH6qO4qs4HhQfIJM6Q2yg-U36zJHB-e5x-_uu6nYhJVctQLu16Rq4Gt7y5CwlwcDRbGA',
                     fit: BoxFit.cover,
+                    placeholder: (context, url) => const Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black12),
+                      ),
+                    ),
                   ),
                 ),
               ),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,7 +8,6 @@ import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_state.dar
 import 'package:memory_ticket_app/features/auth/presentation/widgets/auth_button.dart';
 
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.dart';
-import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_event.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_state.dart';
 import 'package:memory_ticket_app/features/memory/presentation/widgets/sync_button.dart';
 import '../../domain/entities/user_entity.dart';
@@ -79,7 +79,7 @@ class ProfilePage extends StatelessWidget {
                     radius: 60,
                     backgroundColor: Colors.grey[200],
                     backgroundImage: user.photoUrl != null
-                        ? NetworkImage(user.photoUrl!)
+                        ? CachedNetworkImageProvider(user.photoUrl!)
                         : null,
                     child: user.photoUrl == null
                         ? SvgPicture.asset(

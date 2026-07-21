@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/ticket_type.dart';
 import 'ticket_style_config.dart';
@@ -74,10 +75,7 @@ class MemoryTicketCard extends StatelessWidget {
                                 tag: heroTag ?? 'memory_image_${title}_$date',
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(6),
-                                  child: AspectRatio(
-                                    aspectRatio: 1,
-                                    child: _buildImage(),
-                                  ),
+                                  child: _buildImage(),
                                 ),
                               ),
                               if (config.mainIcon != null)
@@ -235,16 +233,36 @@ class MemoryTicketCard extends StatelessWidget {
 
   Widget _buildImage() {
     if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
-      return Image.network(
-        imagePath,
+      return CachedNetworkImage(
+        imageUrl: imagePath,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => Container(color: Colors.grey[200]),
+        width: double.infinity,
+        placeholder: (context, url) => Container(
+          color: Colors.grey[100],
+          alignment: Alignment.center,
+          child: const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.black12,
+            ),
+          ),
+        ),
+        errorWidget: (context, url, error) => Container(
+          color: Colors.grey[100],
+          width: double.infinity,
+          child: const Icon(Icons.error_outline, size: 20, color: Colors.black26),
+        ),
       );
     } else if (imagePath.isNotEmpty) {
       return Image.file(
         File(imagePath),
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => Container(color: Colors.grey[200]),
+        errorBuilder: (_, _, _) => Container(
+          color: Colors.grey[200],
+          child: const Icon(Icons.broken_image_outlined),
+        ),
       );
     } else {
       return Container(

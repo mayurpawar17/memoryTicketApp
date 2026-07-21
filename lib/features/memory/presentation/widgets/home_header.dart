@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -59,7 +60,7 @@ class HomeHeader extends StatelessWidget {
                     radius: 24,
                     backgroundColor: Colors.grey[200],
                     backgroundImage: state.user.photoUrl != null
-                        ? NetworkImage(state.user.photoUrl!)
+                        ? CachedNetworkImageProvider(state.user.photoUrl!)
                         : null,
                     child: state.user.photoUrl == null
                         ? SvgPicture.asset(
