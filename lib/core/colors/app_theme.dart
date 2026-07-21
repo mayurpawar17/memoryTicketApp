@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color primary = Color(0x006c63ff);
+  static const Color primary = Color(0xFF4D41DF);
   static const Color accent = Color(0xFFFFB84D);
-  static const Color bgLight = Color(0xFFF7F8FC);
-  static const Color textDark = Color(0xFF222222);
+  static const Color bgLight = Color(0xFFF8F9FD);
+  static const Color textDark = Color(0xFF191C1F);
   static const Color subtitleDark = Color(0xFF6B7280);
 
   static ThemeData get lightTheme {
@@ -13,13 +13,14 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
       scaffoldBackgroundColor: bgLight,
+      fontFamily: 'Inter',
       colorScheme: const ColorScheme.light(
         primary: primary,
         secondary: accent,
-        background: bgLight,
-        surface: Colors.white,
+        surface: bgLight,
+        onSurface: textDark,
       ),
-      textTheme: GoogleFonts.plusJakartaSansTextTheme(
+      textTheme: GoogleFonts.interTextTheme(
         const TextTheme(
           displayLarge: TextStyle(
             fontSize: 28,

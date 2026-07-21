@@ -29,8 +29,8 @@ class HomeHeader extends StatelessWidget {
           ),
           const CircleAvatar(
             radius: 24,
-            backgroundImage: NetworkImage(
-              'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+            backgroundImage: AssetImage(
+              'assets/goa.jpg',
             ),
           ),
         ],
