@@ -28,7 +28,7 @@ class NewMemoryTicketPage extends StatefulWidget {
 class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
   final List<String> _styles = ['Movie', 'Flight', 'Concert', 'Festival'];
   int _selectedStyleIndex = 0;
-  File? _imageFile;
+  String? _imagePath;
   final ImagePicker _picker = ImagePicker();
 
   final _titleController = TextEditingController();
@@ -68,7 +68,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
               await editedFile.writeAsBytes(bytes);
 
               setState(() {
-                _imageFile = editedFile;
+                _imagePath = editedFile.path;
               });
 
               if (mounted) Navigator.pop(context);
@@ -135,7 +135,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
 
   void _saveMemory() {
     if (_titleController.text.isEmpty ||
-        _imageFile == null ||
+        _imagePath == null ||
         _locationController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all required fields')),
@@ -151,7 +151,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
       date: _dateController.text.isEmpty
           ? DateFormat('MMM dd, yyyy').format(DateTime.now())
           : _dateController.text,
-      imagePath: _imageFile!.path,
+      imagePath: _imagePath!,
       category: _selectedCategory,
     );
 
@@ -174,7 +174,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
                 title: "Tap to upload a photo",
                 subtitle: "PNG, JPG UP TO 10MB",
                 icon: FontAwesomeIcons.camera,
-                imageFile: _imageFile,
+                imagePath: _imagePath,
                 onTap: _showImagePickerOptions,
               ),
               const SizedBox(height: 24),
@@ -301,7 +301,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
               const SizedBox(height: 12),
 
               // --- LIVE PREVIEW HEADER ---
-              if (_imageFile != null) ...[
+              if (_imagePath != null) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -346,7 +346,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
                   ]),
                   builder: (context, _) {
                     return MemoryTicketCard(
-                      imagePath: _imageFile!.path,
+                      imagePath: _imagePath!,
                       title: _titleController.text.isEmpty
                           ? 'New Memory'
                           : _titleController.text,

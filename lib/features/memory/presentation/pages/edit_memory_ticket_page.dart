@@ -27,7 +27,7 @@ class EditMemoryTicketPage extends StatefulWidget {
 class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
   final List<String> _styles = ['Movie', 'Flight', 'Concert', 'Festival'];
   int _selectedStyleIndex = 0;
-  File? _imageFile;
+  String? _imagePath;
   final ImagePicker _picker = ImagePicker();
 
   late final TextEditingController _titleController;
@@ -44,7 +44,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
     _locationController = TextEditingController(text: widget.memory.location);
     _descriptionController = TextEditingController(text: widget.memory.description);
     _selectedCategory = widget.memory.category;
-    _imageFile = File(widget.memory.imagePath);
+    _imagePath = widget.memory.imagePath;
   }
 
   @override
@@ -78,7 +78,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
               await editedFile.writeAsBytes(bytes);
 
               setState(() {
-                _imageFile = editedFile;
+                _imagePath = editedFile.path;
               });
 
               if (mounted) Navigator.pop(context);
@@ -145,7 +145,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
 
   void _updateMemory() {
     if (_titleController.text.isEmpty ||
-        _imageFile == null ||
+        _imagePath == null ||
         _locationController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all required fields')),
@@ -159,7 +159,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
       description: _descriptionController.text,
       location: _locationController.text,
       date: _dateController.text,
-      imagePath: _imageFile!.path,
+      imagePath: _imagePath!,
       category: _selectedCategory,
       isFavorite: widget.memory.isFavorite,
     );
@@ -183,7 +183,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
                 title: "Tap to change photo",
                 subtitle: "PNG, JPG UP TO 10MB",
                 icon: FontAwesomeIcons.camera,
-                imageFile: _imageFile,
+                imagePath: _imagePath,
                 onTap: _showImagePickerOptions,
               ),
               const SizedBox(height: 24),
@@ -315,7 +315,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
                 ]),
                 builder: (context, _) {
                   return MemoryTicketCard(
-                    imagePath: _imageFile?.path ?? widget.memory.imagePath,
+                    imagePath: _imagePath ?? widget.memory.imagePath,
                     title: _titleController.text.isEmpty
                         ? 'New Memory'
                         : _titleController.text,

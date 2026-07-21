@@ -16,8 +16,8 @@ class UploadPlaceholder extends StatelessWidget {
   /// Callback trigger when the user presses anywhere inside the boundary
   final VoidCallback onTap;
 
-  /// The selected image file to display
-  final File? imageFile;
+  /// The selected image path (can be local file path or network URL)
+  final String? imagePath;
 
   const UploadPlaceholder({
     super.key,
@@ -25,7 +25,7 @@ class UploadPlaceholder extends StatelessWidget {
     required this.subtitle,
     required this.icon,
     required this.onTap,
-    this.imageFile,
+    this.imagePath,
   });
 
   @override
@@ -43,8 +43,8 @@ class UploadPlaceholder extends StatelessWidget {
         highlightColor: theme.colorScheme.primary.withOpacity(0.02),
         child: Container(
           width: double.infinity,
-          height: imageFile != null ? 200 : null,
-          padding: imageFile != null
+          height: imagePath != null ? 200 : null,
+          padding: imagePath != null
               ? EdgeInsets.zero
               : const EdgeInsets.symmetric(vertical: 36, horizontal: 16),
           decoration: BoxDecoration(
@@ -57,14 +57,11 @@ class UploadPlaceholder extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: borderRadius,
-            child: imageFile != null
+            child: imagePath != null
                 ? Stack(
                     fit: StackFit.expand,
                     children: [
-                      Image.file(
-                        imageFile!,
-                        fit: BoxFit.cover,
-                      ),
+                      _buildImage(),
                       Positioned(
                         right: 8,
                         top: 8,
@@ -124,5 +121,23 @@ class UploadPlaceholder extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildImage() {
+    if (imagePath == null) return const SizedBox.shrink();
+
+    if (imagePath!.startsWith('http')) {
+      return Image.network(
+        imagePath!,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => Container(color: Colors.grey[200]),
+      );
+    } else {
+      return Image.file(
+        File(imagePath!),
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => Container(color: Colors.grey[200]),
+      );
+    }
   }
 }
