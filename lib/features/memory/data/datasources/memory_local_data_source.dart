@@ -24,7 +24,7 @@ class MemoryLocalDataSourceImpl implements MemoryLocalDataSource {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) {
         return db.execute('''
           CREATE TABLE memories(
@@ -35,9 +35,15 @@ class MemoryLocalDataSourceImpl implements MemoryLocalDataSource {
             date TEXT,
             imagePath TEXT,
             category TEXT,
+            ticketType TEXT,
             isFavorite INTEGER
           )
         ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('ALTER TABLE memories ADD COLUMN ticketType TEXT');
+        }
       },
     );
   }

@@ -34,14 +34,16 @@ class MemoryRepositoryImpl implements MemoryRepository {
       date: memory.date,
       imagePath: memory.imagePath,
       category: memory.category,
+      ticketType: memory.ticketType,
       isFavorite: memory.isFavorite,
     );
     await localDataSource.saveMemory(memoryModel);
-    
+
     // Auto-sync if logged in
     final userId = supabaseClient.auth.currentUser?.id;
     if (userId != null) {
-      _logger.i('User logged in, triggering auto-sync for memory ${memory.id}', tag: _tag);
+      _logger.i('User logged in, triggering auto-sync for memory ${memory.id}',
+          tag: _tag);
       _syncSingleMemory(memoryModel, userId); // Run in background
     }
   }
@@ -130,6 +132,7 @@ class MemoryRepositoryImpl implements MemoryRepository {
           date: memory.date,
           imagePath: finalImagePath,
           category: memory.category,
+          ticketType: memory.ticketType,
           isFavorite: memory.isFavorite,
         );
         await localDataSource.saveMemory(updatedMemory);

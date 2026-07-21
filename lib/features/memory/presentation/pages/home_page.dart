@@ -169,6 +169,7 @@ class _HomePageState extends State<HomePage> {
                                   date: item.date,
                                   description: item.description,
                                   isFavorite: item.isFavorite,
+                                  ticketType: item.ticketType,
                                   onFavorite: () {
                                     context.read<MemoryBloc>().add(
                                           ToggleFavoriteEvent(

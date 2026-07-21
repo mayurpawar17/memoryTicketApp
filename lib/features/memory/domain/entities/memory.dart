@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'ticket_type.dart';
 
 class Memory extends Equatable {
   final String id;
@@ -8,6 +9,7 @@ class Memory extends Equatable {
   final String date;
   final String imagePath;
   final String category;
+  final TicketType ticketType;
   final bool isFavorite;
 
   const Memory({
@@ -18,10 +20,20 @@ class Memory extends Equatable {
     required this.date,
     required this.imagePath,
     required this.category,
+    this.ticketType = TicketType.classicTicket,
     this.isFavorite = false,
   });
 
   @override
-  List<Object?> get props =>
-      [id, title, description, location, date, imagePath, category, isFavorite];
+  List<Object?> get props => [
+        id,
+        title,
+        description,
+        location,
+        date,
+        imagePath,
+        category,
+        ticketType,
+        isFavorite
+      ];
 }

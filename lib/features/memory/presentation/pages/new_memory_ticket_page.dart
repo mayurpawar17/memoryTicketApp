@@ -8,8 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:memory_ticket_app/core/widgets/custom_app_bar.dart';
 import 'package:memory_ticket_app/core/widgets/custom_button.dart';
-import 'package:memory_ticket_app/core/widgets/custom_category_chips.dart';
 import 'package:memory_ticket_app/features/memory/domain/entities/memory.dart';
+import 'package:memory_ticket_app/features/memory/domain/entities/ticket_type.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_event.dart';
 import 'package:memory_ticket_app/features/memory/presentation/widgets/memory_ticket_card.dart';
@@ -26,8 +26,8 @@ class NewMemoryTicketPage extends StatefulWidget {
 }
 
 class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
-  final List<String> _styles = ['Movie', 'Flight', 'Concert', 'Festival'];
-  int _selectedStyleIndex = 0;
+  final List<TicketType> _ticketTypes = TicketType.values;
+  int _selectedTypeIndex = TicketType.values.indexOf(TicketType.classicTicket);
   String? _imagePath;
   final ImagePicker _picker = ImagePicker();
 
@@ -153,6 +153,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
           : _dateController.text,
       imagePath: _imagePath!,
       category: _selectedCategory,
+      ticketType: _ticketTypes[_selectedTypeIndex],
     );
 
     context.read<MemoryBloc>().add(AddMemory(memory));
@@ -291,12 +292,34 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
               ),
               const SizedBox(height: 12),
 
-              CustomCategoryChips(
-                categories: _styles,
-                selectedIndex: _selectedStyleIndex,
-                onSelected: (index) {
-                  setState(() => _selectedStyleIndex = index);
-                },
+              SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _ticketTypes.length,
+                  itemBuilder: (context, index) {
+                    final type = _ticketTypes[index];
+                    final isSelected = _selectedTypeIndex == index;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: ChoiceChip(
+                        label: Text("${type.icon} ${type.displayName}"),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          if (selected) {
+                            setState(() => _selectedTypeIndex = index);
+                          }
+                        },
+                        selectedColor: const Color(0xFF4E44E7),
+                        labelStyle: TextStyle(
+                          color: isSelected ? Colors.white : Colors.black87,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
               const SizedBox(height: 12),
 
@@ -359,6 +382,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
                       description: _descriptionController.text.isEmpty
                           ? 'A moment captured in time, waiting for its story to be told...'
                           : _descriptionController.text,
+                      ticketType: _ticketTypes[_selectedTypeIndex],
                       isFavorite: false,
                     );
                   },

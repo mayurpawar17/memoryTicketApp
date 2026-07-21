@@ -26,6 +26,7 @@ class MemoryRemoteDataSourceImpl implements MemoryRemoteDataSource {
       // Our model uses 'imagePath' but remote might use 'image_url'
       data['image_url'] = data.remove('imagePath');
       data['is_favorite'] = data.remove('isFavorite') == 1;
+      data['ticket_type'] = data.remove('ticketType');
 
       await supabaseClient.from('memories').upsert(data);
       _logger.i('Synced memory ${memory.id} to cloud', tag: _tag);
@@ -48,6 +49,7 @@ class MemoryRemoteDataSourceImpl implements MemoryRemoteDataSource {
         final map = Map<String, dynamic>.from(data);
         map['imagePath'] = map.remove('image_url');
         map['isFavorite'] = map.remove('is_favorite') == true ? 1 : 0;
+        map['ticketType'] = map.remove('ticket_type');
         return MemoryModel.fromMap(map);
       }).toList();
     } catch (e, stack) {

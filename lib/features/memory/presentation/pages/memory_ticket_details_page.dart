@@ -97,6 +97,7 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
                 date: _memory.date,
                 description: _memory.description,
                 isFavorite: _memory.isFavorite,
+                ticketType: _memory.ticketType,
                 onFavorite: () {
                   context.read<MemoryBloc>().add(
                         ToggleFavoriteEvent(_memory.id, !_memory.isFavorite),
@@ -110,6 +111,7 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
                       date: _memory.date,
                       imagePath: _memory.imagePath,
                       category: _memory.category,
+                      ticketType: _memory.ticketType,
                       isFavorite: !_memory.isFavorite,
                     );
                   });

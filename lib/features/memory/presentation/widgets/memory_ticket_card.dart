@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import '../../domain/entities/ticket_type.dart';
+import 'ticket_style_config.dart';
 
 class MemoryTicketCard extends StatelessWidget {
   final String imagePath;
@@ -9,6 +11,7 @@ class MemoryTicketCard extends StatelessWidget {
   final String date;
   final String description;
   final bool isFavorite;
+  final TicketType ticketType;
   final VoidCallback? onTap;
   final VoidCallback? onFavorite;
   final VoidCallback? onMore;
@@ -21,6 +24,7 @@ class MemoryTicketCard extends StatelessWidget {
     required this.date,
     required this.description,
     required this.isFavorite,
+    this.ticketType = TicketType.classicTicket,
     this.onTap,
     this.onFavorite,
     this.onMore,
@@ -29,8 +33,7 @@ class MemoryTicketCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // Explicit positioning split matrix matched exactly to the clipper
-    const double splitRatio = 0.69;
+    final config = TicketStyleConfig.fromType(ticketType);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -44,12 +47,12 @@ class MemoryTicketCard extends StatelessWidget {
         ],
       ),
       child: ClipPath(
-        clipper: const StampTicketClipper(sidePunchYRatio: splitRatio),
+        clipper: StampTicketClipper(sidePunchYRatio: config.sidePunchYRatio),
         child: Material(
-          color: Colors.white,
+          color: config.backgroundColor,
           child: InkWell(
             onTap: onTap,
-            splashColor: theme.primaryColor.withOpacity(0.04),
+            splashColor: config.accentColor.withOpacity(0.04),
             highlightColor: Colors.transparent,
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -63,18 +66,39 @@ class MemoryTicketCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: AspectRatio(
-                              aspectRatio: 1,
-                              child: _buildImage(),
-                            ),
+                          Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: _buildImage(),
+                                ),
+                              ),
+                              if (config.mainIcon != null)
+                                Positioned(
+                                  top: 12,
+                                  right: 12,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.9),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      config.mainIcon,
+                                      color: config.accentColor,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                           const SizedBox(height: 16),
                           Text(
                             title,
-                            style: const TextStyle(
-                              color: Color(0xFF222222),
+                            style: TextStyle(
+                              color: config.textColor,
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                               letterSpacing: -0.5,
@@ -86,13 +110,13 @@ class MemoryTicketCard extends StatelessWidget {
                               Icon(
                                 Icons.location_on,
                                 size: 12,
-                                color: Colors.grey[600],
+                                color: config.secondaryTextColor,
                               ),
                               const SizedBox(width: 2),
                               Text(
                                 location,
                                 style: TextStyle(
-                                  color: Colors.grey[700],
+                                  color: config.secondaryTextColor,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -101,13 +125,13 @@ class MemoryTicketCard extends StatelessWidget {
                               Icon(
                                 Icons.calendar_today,
                                 size: 11,
-                                color: Colors.grey[600],
+                                color: config.secondaryTextColor,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 date,
                                 style: TextStyle(
-                                  color: Colors.grey[700],
+                                  color: config.secondaryTextColor,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -128,7 +152,7 @@ class MemoryTicketCard extends StatelessWidget {
                             child: Container(
                               color: index % 2 == 0
                                   ? Colors.transparent
-                                  : Colors.grey[300],
+                                  : config.accentColor.withOpacity(0.2),
                               height: 1.5,
                             ),
                           ),
@@ -145,7 +169,7 @@ class MemoryTicketCard extends StatelessWidget {
                           Icon(
                             Icons.format_quote,
                             size: 16,
-                            color: Colors.grey[400],
+                            color: config.accentColor.withOpacity(0.3),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
@@ -155,7 +179,7 @@ class MemoryTicketCard extends StatelessWidget {
                             child: Text(
                               description,
                               style: TextStyle(
-                                color: Colors.grey[600],
+                                color: config.secondaryTextColor,
                                 fontSize: 14,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -174,7 +198,7 @@ class MemoryTicketCard extends StatelessWidget {
                                       : Icons.favorite_border,
                                   color: isFavorite
                                       ? Colors.redAccent
-                                      : Colors.grey[400],
+                                      : config.secondaryTextColor.withOpacity(0.5),
                                 ),
                                 onPressed: onFavorite,
                                 constraints: const BoxConstraints(),
@@ -183,7 +207,7 @@ class MemoryTicketCard extends StatelessWidget {
                               IconButton(
                                 icon: Icon(
                                   Icons.more_vert,
-                                  color: Colors.grey[400],
+                                  color: config.secondaryTextColor.withOpacity(0.5),
                                 ),
                                 onPressed: onMore,
                                 constraints: const BoxConstraints(),

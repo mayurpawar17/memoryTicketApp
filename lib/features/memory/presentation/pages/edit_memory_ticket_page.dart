@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:memory_ticket_app/core/widgets/custom_app_bar.dart';
 import 'package:memory_ticket_app/core/widgets/custom_button.dart';
 import 'package:memory_ticket_app/features/memory/domain/entities/memory.dart';
+import 'package:memory_ticket_app/features/memory/domain/entities/ticket_type.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_event.dart';
 import 'package:memory_ticket_app/features/memory/presentation/widgets/memory_ticket_card.dart';
@@ -25,8 +26,8 @@ class EditMemoryTicketPage extends StatefulWidget {
 }
 
 class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
-  final List<String> _styles = ['Movie', 'Flight', 'Concert', 'Festival'];
-  int _selectedStyleIndex = 0;
+  final List<TicketType> _ticketTypes = TicketType.values;
+  late int _selectedTypeIndex;
   String? _imagePath;
   final ImagePicker _picker = ImagePicker();
 
@@ -42,9 +43,11 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
     _titleController = TextEditingController(text: widget.memory.title);
     _dateController = TextEditingController(text: widget.memory.date);
     _locationController = TextEditingController(text: widget.memory.location);
-    _descriptionController = TextEditingController(text: widget.memory.description);
+    _descriptionController =
+        TextEditingController(text: widget.memory.description);
     _selectedCategory = widget.memory.category;
     _imagePath = widget.memory.imagePath;
+    _selectedTypeIndex = _ticketTypes.indexOf(widget.memory.ticketType);
   }
 
   @override
@@ -161,6 +164,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
       date: _dateController.text,
       imagePath: _imagePath!,
       category: _selectedCategory,
+      ticketType: _ticketTypes[_selectedTypeIndex],
       isFavorite: widget.memory.isFavorite,
     );
 
@@ -288,6 +292,49 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
               ),
               const SizedBox(height: 28),
 
+              // --- CHOOSE TICKET STYLE HIERARCHY ---
+              Text(
+                'CHOOSE TICKET STYLE',
+                style: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _ticketTypes.length,
+                  itemBuilder: (context, index) {
+                    final type = _ticketTypes[index];
+                    final isSelected = _selectedTypeIndex == index;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: ChoiceChip(
+                        label: Text("${type.icon} ${type.displayName}"),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          if (selected) {
+                            setState(() => _selectedTypeIndex = index);
+                          }
+                        },
+                        selectedColor: const Color(0xFF4E44E7),
+                        labelStyle: TextStyle(
+                          color: isSelected ? Colors.white : Colors.black87,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 12),
+
               // --- LIVE PREVIEW HEADER ---
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -328,6 +375,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
                     description: _descriptionController.text.isEmpty
                         ? 'A moment captured in time, waiting for its story to be told...'
                         : _descriptionController.text,
+                    ticketType: _ticketTypes[_selectedTypeIndex],
                     isFavorite: widget.memory.isFavorite,
                   );
                 },

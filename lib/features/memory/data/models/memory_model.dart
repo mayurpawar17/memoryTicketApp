@@ -1,4 +1,5 @@
 import '../../domain/entities/memory.dart';
+import '../../domain/entities/ticket_type.dart';
 
 class MemoryModel extends Memory {
   const MemoryModel({
@@ -9,6 +10,7 @@ class MemoryModel extends Memory {
     required super.date,
     required super.imagePath,
     required super.category,
+    super.ticketType,
     super.isFavorite,
   });
 
@@ -21,6 +23,10 @@ class MemoryModel extends Memory {
       date: map['date'],
       imagePath: map['imagePath'],
       category: map['category'] ?? '',
+      ticketType: TicketType.values.firstWhere(
+        (e) => e.name == map['ticketType'],
+        orElse: () => TicketType.classicTicket,
+      ),
       isFavorite: map['isFavorite'] == 1,
     );
   }
@@ -34,6 +40,7 @@ class MemoryModel extends Memory {
       'date': date,
       'imagePath': imagePath,
       'category': category,
+      'ticketType': ticketType.name,
       'isFavorite': isFavorite ? 1 : 0,
     };
   }
