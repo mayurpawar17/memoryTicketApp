@@ -5,4 +5,5 @@ abstract class MemoryRepository {
   Future<void> saveMemory(Memory memory);
   Future<void> deleteMemory(String id);
   Future<void> toggleFavorite(String id, bool isFavorite);
+  Future<void> syncWithCloud();
 }

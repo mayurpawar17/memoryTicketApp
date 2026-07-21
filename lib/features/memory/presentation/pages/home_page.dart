@@ -12,6 +12,9 @@ import '../widgets/home_header.dart';
 import '../widgets/memory_search_bar.dart';
 import '../widgets/memory_ticket_card.dart';
 
+import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_state.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -37,110 +40,6 @@ class _HomePageState extends State<HomePage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      body: SafeArea(
-        child: BlocBuilder<MemoryBloc, MemoryState>(
-          builder: (context, state) {
-            return CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                const SliverToBoxAdapter(child: HomeHeader()),
-                const SliverToBoxAdapter(child: SizedBox(height: 8)),
-                const SliverToBoxAdapter(child: MemorySearchBar()),
-                const SliverToBoxAdapter(child: SizedBox(height: 20)),
-                SliverToBoxAdapter(
-                  child: CustomCategoryChips(
-                    categories: _categories,
-                    selectedIndex: _selectedIndex,
-                    onSelected: (index) {
-                      setState(() {
-                        _selectedIndex = index;
-                      });
-                    },
-                  ),
-                ),
-                const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-                // Recent Section Header Row
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0,
-                      vertical: 8.0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Recent Memories',
-                            style: theme.textTheme.titleLarge),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'See All',
-                            style: TextStyle(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                if (state is MemoryLoading)
-                  const SliverToBoxAdapter(
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                else if (state is MemoryError)
-                  SliverToBoxAdapter(
-                    child: Center(child: Text(state.message)),
-                  )
-                else if (state is MemoryLoaded)
-                  state.memories.isEmpty
-                      ? const SliverToBoxAdapter(
-                          child: Center(child: Text('No memories yet.')),
-                        )
-                      : SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final item = state.memories[index];
-                              return MemoryTicketCard(
-                                imagePath: item.imagePath,
-                                title: item.title,
-                                location: item.location,
-                                date: item.date,
-                                description: item.description,
-                                isFavorite: item.isFavorite,
-                                onFavorite: () {
-                                  context.read<MemoryBloc>().add(
-                                        ToggleFavoriteEvent(
-                                            item.id, !item.isFavorite),
-                                      );
-                                },
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          MemoryTicketDetailsScreen(
-                                              memory: item),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            childCount: state.memories.length,
-                          ),
-                        )
-                else
-                  const SliverToBoxAdapter(child: SizedBox.shrink()),
-
-                const SliverToBoxAdapter(child: SizedBox(height: 100)),
-              ],
-            );
-          },
-        ),
-      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
@@ -176,6 +75,131 @@ class _HomePageState extends State<HomePage> {
         extendedPadding: EdgeInsets.zero,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is Authenticated) {
+                // Trigger sync when user logs in or app starts authenticated
+                context.read<MemoryBloc>().add(SyncMemoriesEvent());
+              }
+            },
+          ),
+          BlocListener<MemoryBloc, MemoryState>(
+            listener: (context, state) {
+              if (state is MemoryError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(state.message)),
+                );
+              }
+            },
+          ),
+        ],
+        child: SafeArea(
+          child: BlocBuilder<MemoryBloc, MemoryState>(
+            builder: (context, state) {
+              return CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  const SliverToBoxAdapter(child: HomeHeader()),
+                  const SliverToBoxAdapter(child: SizedBox(height: 8)),
+                  const SliverToBoxAdapter(child: MemorySearchBar()),
+                  const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  SliverToBoxAdapter(
+                    child: CustomCategoryChips(
+                      categories: _categories,
+                      selectedIndex: _selectedIndex,
+                      onSelected: (index) {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                      },
+                    ),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+                  // Recent Section Header Row
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 8.0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Recent Memories',
+                              style: theme.textTheme.titleLarge),
+                          TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              'See All',
+                              style: TextStyle(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  if (state is MemoryLoading)
+                    const SliverToBoxAdapter(
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else if (state is MemoryError)
+                    SliverToBoxAdapter(
+                      child: Center(child: Text(state.message)),
+                    )
+                  else if (state is MemoryLoaded)
+                    state.memories.isEmpty
+                        ? const SliverToBoxAdapter(
+                            child: Center(child: Text('No memories yet.')),
+                          )
+                        : SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                final item = state.memories[index];
+                                return MemoryTicketCard(
+                                  imagePath: item.imagePath,
+                                  title: item.title,
+                                  location: item.location,
+                                  date: item.date,
+                                  description: item.description,
+                                  isFavorite: item.isFavorite,
+                                  onFavorite: () {
+                                    context.read<MemoryBloc>().add(
+                                          ToggleFavoriteEvent(
+                                              item.id, !item.isFavorite),
+                                        );
+                                  },
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            MemoryTicketDetailsScreen(
+                                                memory: item),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              childCount: state.memories.length,
+                            ),
+                          )
+                  else
+                    const SliverToBoxAdapter(child: SizedBox.shrink()),
+
+                  const SliverToBoxAdapter(child: SizedBox(height: 100)),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

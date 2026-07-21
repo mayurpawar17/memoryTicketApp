@@ -27,3 +27,5 @@ class MemoryError extends MemoryState {
   @override
   List<Object> get props => [message];
 }
+
+class MemorySyncing extends MemoryState {}

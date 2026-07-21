@@ -34,3 +34,5 @@ class ToggleFavoriteEvent extends MemoryEvent {
   @override
   List<Object> get props => [id, isFavorite];
 }
+
+class SyncMemoriesEvent extends MemoryEvent {}

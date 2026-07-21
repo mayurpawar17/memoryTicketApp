@@ -1,17 +1,18 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:memory_ticket_app/core/colors/app_theme.dart';
+import 'package:memory_ticket_app/core/secrets/app_secrets.dart';
+import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_event.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_event.dart';
 import 'package:memory_ticket_app/features/memory/presentation/pages/home_page.dart';
 import 'package:memory_ticket_app/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:memory_ticket_app/injection_container.dart' as di;
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'firebase_options.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -19,8 +20,12 @@ void main() async {
   // Keep the splash screen until initialization is complete
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  // Initialize services
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Initialize Supabase
+  await Supabase.initialize(
+    url: AppSecrets.SUPABASE_URL,
+    publishableKey: AppSecrets.SUPABASE_PUBLISHABLE_KEY,
+  );
+
   await di.init();
 
   // Setup System UI (Transparent status bar)
@@ -45,6 +50,7 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_) => di.sl<AuthBloc>()..add(AppStarted())),
         BlocProvider(create: (_) => di.sl<MemoryBloc>()..add(LoadMemories())),
       ],
       child: MyApp(
