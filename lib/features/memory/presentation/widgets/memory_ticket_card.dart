@@ -232,44 +232,65 @@ class MemoryTicketCard extends StatelessWidget {
   }
 
   Widget _buildImage() {
-    if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
-      return CachedNetworkImage(
-        imageUrl: imagePath,
-        fit: BoxFit.cover,
-        width: double.infinity,
-        placeholder: (context, url) => Container(
-          color: Colors.grey[100],
-          alignment: Alignment.center,
-          child: const SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: Colors.black12,
-            ),
-          ),
-        ),
-        errorWidget: (context, url, error) => Container(
-          color: Colors.grey[100],
-          width: double.infinity,
-          child: const Icon(Icons.error_outline, size: 20, color: Colors.black26),
-        ),
-      );
-    } else if (imagePath.isNotEmpty) {
-      return Image.file(
-        File(imagePath),
-        fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => Container(
-          color: Colors.grey[200],
-          child: const Icon(Icons.broken_image_outlined),
-        ),
-      );
-    } else {
-      return Container(
-        color: Colors.grey[200],
-        child: const Icon(Icons.image, color: Colors.grey),
-      );
-    }
+    final bool isNetwork =
+        imagePath.startsWith('http') || imagePath.startsWith('https');
+
+    return Container(
+      width: double.infinity,
+      constraints: const BoxConstraints(
+        minHeight: 180,
+      ),
+      child: isNetwork
+          ? CachedNetworkImage(
+              imageUrl: imagePath,
+              fit: BoxFit.contain,
+              width: double.infinity,
+              fadeInDuration: const Duration(milliseconds: 500),
+              fadeOutDuration: const Duration(milliseconds: 300),
+              placeholder: (context, url) => Container(
+                color: Colors.grey[100],
+                alignment: Alignment.center,
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.black12,
+                ),
+              ),
+              errorWidget: (context, url, error) => Container(
+                color: Colors.grey[100],
+                width: double.infinity,
+                alignment: Alignment.center,
+                child: const Icon(Icons.error_outline,
+                    size: 20, color: Colors.black26),
+              ),
+            )
+          : imagePath.isNotEmpty
+              ? Image.file(
+                  File(imagePath),
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                  frameBuilder:
+                      (context, child, frame, wasSynchronouslyLoaded) {
+                    if (wasSynchronouslyLoaded) return child;
+                    return AnimatedOpacity(
+                      opacity: frame == null ? 0 : 1,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeOut,
+                      child: child,
+                    );
+                  },
+                  errorBuilder: (_, _, _) => Container(
+                    color: Colors.grey[200],
+                    alignment: Alignment.center,
+                    child: const Icon(Icons.broken_image_outlined,
+                        color: Colors.black26),
+                  ),
+                )
+              : Container(
+                  color: Colors.grey[200],
+                  alignment: Alignment.center,
+                  child: const Icon(Icons.image, color: Colors.grey),
+                ),
+    );
   }
 }
 

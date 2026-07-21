@@ -66,24 +66,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.confirmation_number,
-                        color: Color(0xFF4D41DF),
-                        size: 28,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Memory Ticket',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF4D41DF),
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                    ],
+                  Image.asset(
+                    'assets/memoryTicketLogo.png',
+                    height: 32,
+                    fit: BoxFit.contain,
                   ),
                   AnimatedOpacity(
                     opacity: _currentIndex == _totalScreens - 1 ? 0.0 : 1.0,
@@ -282,10 +268,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       child: CachedNetworkImage(
                         imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC8EIVvtBFLRXVf9r9s59wptRMPsHlhO0vWBedJewW4i4IPfgUzI9whYEJ3tM4HP6Uh5xYwpUEf-UgEVhILAMJeMWbDwhPMBWUQQaMXHMlJrMTBwwUatpMwinlCe27anoeuNeKMxdx2F6UokexDfPVw1W0FOukBImIPxLYakH0rCXnBf55u1638O_F2IxI65j-07QjxQ08zf8bWqC9Xs26HCJM1K-PIQMJ2KbD644Xm3ejl2b7VjJDN5w',
                         fit: BoxFit.contain,
-                        placeholder: (context, url) => const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black12),
+                        width: double.infinity,
+                        height: double.infinity,
+                        fadeInDuration: const Duration(milliseconds: 500),
+                        fadeOutDuration: const Duration(milliseconds: 300),
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.black12),
                         ),
                       ),
                     ),
@@ -407,12 +396,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     child: CachedNetworkImage(
                       imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDK0_-csOP8prziLQAe5ypmJqwgmGYt7hDCQAchA31EybmEe6eKxHLOmtCqwZM8XwjX-623PQl0OrEzX93bsckSuPHxx2qpx2Iw4Ys9syy7Hi3FczJ4YWnLvB1eubbJvXie_TDh73GIpn3wIrygVjG4zPAMnSJuc86J1jEZxGCUpGrD10eCvgLLHkSZYjamnlAAo-DdHIeWgINLGTbLDPl9Kzh2EDHkAjydAlss5Ar7xHiQxU3LUOVcCA',
                       fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fadeInDuration: const Duration(milliseconds: 500),
+                      fadeOutDuration: const Duration(milliseconds: 300),
                       placeholder: (context, url) => const Center(
-                        child: SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black12),
-                        ),
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.black12),
                       ),
                     ),
                   ),
@@ -531,12 +521,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   child: CachedNetworkImage(
                     imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBIgh2pln-Xear5r1dCf5hQ57GpGrJ80rqu278g6mchN8tQRSAbg1xVqJ8-dUD_WoK7mDKIsAZDxJBIJ1iTSPhsmKWNWB8szSXbGXlYPTEkxlOWc2yapUzHbXRrl4lUcCrRKsP4X8S-_g654uMIn-0aLVz4aVrn5y9qTRlzl0ch6UmCOh6CMtKH6qO4qs4HhQfIJM6Q2yg-U36zJHB-e5x-_uu6nYhJVctQLu16Rq4Gt7y5CwlwcDRbGA',
                     fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                    fadeInDuration: const Duration(milliseconds: 500),
+                    fadeOutDuration: const Duration(milliseconds: 300),
                     placeholder: (context, url) => const Center(
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black12),
-                      ),
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.black12),
                     ),
                   ),
                 ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -124,16 +125,54 @@ class UploadPlaceholder extends StatelessWidget {
   Widget _buildImage() {
     if (imagePath == null) return const SizedBox.shrink();
 
-    if (imagePath!.startsWith('http')) {
-      return Image.network(
-        imagePath!,
-        errorBuilder: (_, _, _) => Container(color: Colors.grey[200]),
-      );
-    } else {
-      return Image.file(
-        File(imagePath!),
-        errorBuilder: (_, _, _) => Container(color: Colors.grey[200]),
-      );
-    }
+    final bool isNetwork = imagePath!.startsWith('http');
+
+    return Container(
+      width: double.infinity,
+      constraints: const BoxConstraints(
+        minHeight: 200,
+      ),
+      child: isNetwork
+          ? CachedNetworkImage(
+              imageUrl: imagePath!,
+              fit: BoxFit.contain,
+              width: double.infinity,
+              fadeInDuration: const Duration(milliseconds: 500),
+              fadeOutDuration: const Duration(milliseconds: 300),
+              placeholder: (context, url) => Container(
+                color: Colors.grey[100],
+                alignment: Alignment.center,
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.black12,
+                ),
+              ),
+              errorWidget: (context, url, error) => Container(
+                color: Colors.grey[100],
+                alignment: Alignment.center,
+                child: const Icon(Icons.error_outline, color: Colors.black26),
+              ),
+            )
+          : Image.file(
+              File(imagePath!),
+              fit: BoxFit.contain,
+              width: double.infinity,
+              frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                if (wasSynchronouslyLoaded) return child;
+                return AnimatedOpacity(
+                  opacity: frame == null ? 0 : 1,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeOut,
+                  child: child,
+                );
+              },
+              errorBuilder: (_, __, ___) => Container(
+                color: Colors.grey[100],
+                alignment: Alignment.center,
+                child: const Icon(Icons.broken_image_outlined,
+                    color: Colors.black26),
+              ),
+            ),
+    );
   }
 }
