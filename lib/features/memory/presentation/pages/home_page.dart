@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/colors/app_colors.dart';
 import '../../../../core/widgets/custom_category_chips.dart';
 import '../widgets/home_header.dart';
-import '../widgets/memory_search_bar.dart';
 import '../widgets/memory_ticket_card.dart';
 
 import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -102,9 +101,7 @@ class _HomePageState extends State<HomePage> {
                 physics: const BouncingScrollPhysics(),
                 slivers: [
                   const SliverToBoxAdapter(child: HomeHeader()),
-                  const SliverToBoxAdapter(child: SizedBox(height: 8)),
-                  const SliverToBoxAdapter(child: MemorySearchBar()),
-                  const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 12)),
                   SliverToBoxAdapter(
                     child: CustomCategoryChips(
                       categories: _categories,
@@ -154,43 +151,58 @@ class _HomePageState extends State<HomePage> {
                       child: Center(child: Text(state.message)),
                     )
                   else if (state is MemoryLoaded)
-                    state.memories.isEmpty
-                        ? const SliverToBoxAdapter(
-                            child: Center(child: Text('No memories yet.')),
-                          )
-                        : SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                final item = state.memories[index];
-                                return MemoryTicketCard(
-                                  imagePath: item.imagePath,
-                                  title: item.title,
-                                  location: item.location,
-                                  date: item.date,
-                                  description: item.description,
-                                  isFavorite: item.isFavorite,
-                                  ticketType: item.ticketType,
-                                  onFavorite: () {
-                                    context.read<MemoryBloc>().add(
-                                          ToggleFavoriteEvent(
-                                              item.id, !item.isFavorite),
-                                        );
-                                  },
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                            MemoryTicketDetailsScreen(
-                                                memory: item),
-                                      ),
+                    () {
+                      final selectedCategory = _categories[_selectedIndex];
+                      final filteredMemories = selectedCategory == 'All'
+                          ? state.memories
+                          : state.memories
+                              .where((m) => m.category == selectedCategory)
+                              .toList();
+
+                      if (filteredMemories.isEmpty) {
+                        return const SliverToBoxAdapter(
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 40.0),
+                              child: Text('No memories in this category.'),
+                            ),
+                          ),
+                        );
+                      }
+
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final item = filteredMemories[index];
+                            return MemoryTicketCard(
+                              imagePath: item.imagePath,
+                              title: item.title,
+                              location: item.location,
+                              date: item.date,
+                              description: item.description,
+                              isFavorite: item.isFavorite,
+                              ticketType: item.ticketType,
+                              onFavorite: () {
+                                context.read<MemoryBloc>().add(
+                                      ToggleFavoriteEvent(
+                                          item.id, !item.isFavorite),
                                     );
-                                  },
+                              },
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        MemoryTicketDetailsScreen(memory: item),
+                                  ),
                                 );
                               },
-                              childCount: state.memories.length,
-                            ),
-                          )
+                            );
+                          },
+                          childCount: filteredMemories.length,
+                        ),
+                      );
+                    }()
                   else
                     const SliverToBoxAdapter(child: SizedBox.shrink()),
 

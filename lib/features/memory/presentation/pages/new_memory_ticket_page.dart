@@ -134,23 +134,30 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
   }
 
   void _saveMemory() {
-    if (_titleController.text.isEmpty ||
-        _imagePath == null ||
-        _locationController.text.isEmpty) {
+    List<String> missingFields = [];
+    if (_imagePath == null) missingFields.add('Photo');
+    if (_titleController.text.trim().isEmpty) missingFields.add('Title');
+    if (_locationController.text.trim().isEmpty) missingFields.add('Location');
+    if (_dateController.text.trim().isEmpty) missingFields.add('Date');
+    if (_descriptionController.text.trim().isEmpty) missingFields.add('Description');
+
+    if (missingFields.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields')),
+        SnackBar(
+          content: Text('Please fill the following fields: ${missingFields.join(", ")}'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
       return;
     }
 
     final memory = Memory(
       id: const Uuid().v4(),
-      title: _titleController.text,
-      description: _descriptionController.text,
-      location: _locationController.text,
-      date: _dateController.text.isEmpty
-          ? DateFormat('MMM dd, yyyy').format(DateTime.now())
-          : _dateController.text,
+      title: _titleController.text.trim(),
+      description: _descriptionController.text.trim(),
+      location: _locationController.text.trim(),
+      date: _dateController.text,
       imagePath: _imagePath!,
       category: _selectedCategory,
       ticketType: _ticketTypes[_selectedTypeIndex],
