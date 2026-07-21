@@ -169,24 +169,6 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
                     ),
                     onPressed: () => _showDeleteDialog(context),
                   ),
-
-                  // Ultra-HD Info Button
-                  IconButton(
-                    tooltip: "Export Info",
-                    icon: const Icon(
-                      Icons.hd_outlined,
-                      size: 26,
-                      color: Colors.black26,
-                    ),
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              "Ultra-HD image export (4.0x DPI) is active for crisp sharing."),
-                        ),
-                      );
-                    },
-                  ),
                 ],
               ),
             ),
