@@ -9,6 +9,7 @@ import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_event.dart';
 import 'package:memory_ticket_app/features/memory/presentation/pages/edit_memory_ticket_page.dart';
 import 'package:memory_ticket_app/features/memory/presentation/services/ticket_export_service.dart';
+import 'package:memory_ticket_app/core/utils/app_dialogs.dart';
 import '../widgets/memory_ticket_card.dart';
 
 class MemoryTicketDetailsScreen extends StatefulWidget {
@@ -31,39 +32,15 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
   }
 
   void _showDeleteDialog(BuildContext context) {
-    showDialog(
+    AppDialogs.showConfirmationDialog(
       context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Text("Delete Memory"),
-          content: const Text(
-            "Are you sure you want to delete this memory? This action cannot be undone and will also remove it from cloud storage.",
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text(
-                "Cancel",
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                context.read<MemoryBloc>().add(DeleteMemoryEvent(_memory.id));
-                Navigator.pop(dialogContext); // Close dialog
-                Navigator.pop(context); // Go back to Home
-              },
-              child: const Text(
-                "Delete",
-                style: TextStyle(
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        );
+      title: "Delete Memory",
+      content: "Are you sure you want to delete this memory? This action cannot be undone and will also remove it from cloud storage.",
+      confirmText: "Delete",
+      confirmColor: Colors.redAccent,
+      onConfirm: () {
+        context.read<MemoryBloc>().add(DeleteMemoryEvent(_memory.id));
+        Navigator.pop(context); // Go back to Home
       },
     );
   }

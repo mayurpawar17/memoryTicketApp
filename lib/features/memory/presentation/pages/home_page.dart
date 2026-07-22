@@ -183,16 +183,16 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Text('Recent Memories',
                                 style: theme.textTheme.titleLarge),
-                            TextButton(
-                              onPressed: () {},
-                              child: Text(
-                                'See All',
-                                style: TextStyle(
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            // TextButton(
+                            //   onPressed: () {},
+                            //   child: Text(
+                            //     'See All',
+                            //     style: TextStyle(
+                            //       color: theme.colorScheme.primary,
+                            //       fontWeight: FontWeight.bold,
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),

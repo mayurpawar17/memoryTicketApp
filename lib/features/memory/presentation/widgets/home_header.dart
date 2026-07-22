@@ -57,7 +57,7 @@ class HomeHeader extends StatelessWidget {
                     );
                   },
                   child: CircleAvatar(
-                    radius: 24,
+                    radius: 20,
                     backgroundColor: Colors.grey[200],
                     backgroundImage: state.user.photoUrl != null
                         ? CachedNetworkImageProvider(state.user.photoUrl!)
@@ -65,15 +65,14 @@ class HomeHeader extends StatelessWidget {
                     child: state.user.photoUrl == null
                         ? SvgPicture.asset(
                             'assets/profileIcon.svg',
-                            width: 24,
-                            height: 24,
+                            width: 20,
+                            height: 20,
                           )
                         : null,
                   ),
                 );
               }
               return SyncButton(
-                isCompact: true,
                 onPressed: () {
                   Navigator.push(
                     context,

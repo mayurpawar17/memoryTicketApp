@@ -5,15 +5,42 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_event.dart';
 import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_state.dart';
-import 'package:memory_ticket_app/features/auth/presentation/widgets/auth_button.dart';
-
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_state.dart';
-import 'package:memory_ticket_app/features/memory/presentation/widgets/sync_button.dart';
+import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_event.dart';
 import '../../domain/entities/user_entity.dart';
+import 'package:memory_ticket_app/core/utils/app_dialogs.dart';
+import '../widgets/profile_header_card.dart';
+import '../widgets/setting_groups_card.dart';
+import '../widgets/settings_tile.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+
+  void _showLogoutDialog(BuildContext context) {
+    AppDialogs.showConfirmationDialog(
+      context: context,
+      title: 'Logout',
+      content: 'Are you sure you want to logout?',
+      confirmText: 'Logout',
+      onConfirm: () {
+        context.read<AuthBloc>().add(LogoutRequested());
+      },
+    );
+  }
+
+  void _showSyncDialog(BuildContext context) {
+    AppDialogs.showConfirmationDialog(
+      context: context,
+      title: 'Backup & Sync',
+      content: 'Do you want to sync your memories with the cloud?',
+      confirmText: 'Sync Now',
+      confirmColor: Theme.of(context).primaryColor,
+      onConfirm: () {
+        context.read<MemoryBloc>().add(SyncMemoriesEvent());
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +61,35 @@ class ProfilePage extends StatelessWidget {
             },
           ),
           BlocListener<MemoryBloc, MemoryState>(
+            listener: (context, state) {
+              if (state is MemorySyncing) {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Row(
+                      children: [
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
+                        SizedBox(width: 16),
+                        Text('Syncing memories...'),
+                      ],
+                    ),
+                    duration: Duration(days: 1),
+                  ),
+                );
+              }
+            },
+          ),
+          BlocListener<MemoryBloc, MemoryState>(
             listenWhen: (previous, current) => previous is MemorySyncing,
             listener: (context, state) {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
               if (state is MemoryError && state.message.contains('Sync failed')) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(state.message), backgroundColor: Colors.red),
@@ -70,6 +124,9 @@ class ProfilePage extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
+            final currentUser = user;
+            final photoUrl = currentUser.photoUrl;
+
             return LayoutBuilder(
               builder: (context, constraints) {
                 return SingleChildScrollView(
@@ -81,52 +138,67 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Column(
+                          // User Header Card
+                          ProfileHeaderCard(
+                            user: currentUser,
+                          ),
+                          const SizedBox(height: 20),
+
+                          SettingsGroupCard(
                             children: [
-                              const SizedBox(height: 20),
-                              CircleAvatar(
-                                radius: 60,
-                                backgroundColor: Colors.grey[200],
-                                backgroundImage: user!.photoUrl != null
-                                    ? CachedNetworkImageProvider(user.photoUrl!)
-                                    : null,
-                                child: user.photoUrl == null
-                                    ? SvgPicture.asset(
-                                        'assets/profileIcon.svg',
-                                        width: 60,
-                                        height: 60,
-                                      )
-                                    : null,
+                              // SettingsTile(
+                              //   icon: Icons.notifications_none_outlined,
+                              //   title: 'Notification',
+                              //   onTap: () {},
+                              // ),
+                              SettingsTile(
+                                icon: Icons.cloud_sync_outlined, // or Icons.backup_outlined
+                                title: 'Backup & Sync',
+                                subtitle: 'Auto-backup your data to cloud',
+                                onTap: () => _showSyncDialog(context),
                               ),
-                              const SizedBox(height: 24),
-                              Text(
-                                user.name,
-                                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                user.email,
-                                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+
+                              SettingsTile(
+                                icon: Icons.logout,
+                                title: 'Log out',
+                                onTap: () => _showLogoutDialog(context),
+                                showDivider: false, // Hide last divider in card
                               ),
                             ],
                           ),
-                          Column(
-                            children: [
-                              const SyncButton(),
-                              const SizedBox(height: 16),
-                              AuthButton(
-                                text: 'Logout',
-                                color: Colors.red[50],
-                                textColor: Colors.red,
-                                isLoading: isLoggingOut,
-                                onPressed: () {
-                                  context.read<AuthBloc>().add(LogoutRequested());
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                            ],
-                          ),
+
+                          const SizedBox(height: 20),
+                          // Column(
+                          //   children: [
+                          //     const SizedBox(height: 20),
+                          //     CircleAvatar(
+                          //       radius: 60,
+                          //       backgroundColor: Colors.grey[200],
+                          //       backgroundImage: (photoUrl != null && photoUrl.isNotEmpty)
+                          //           ? CachedNetworkImageProvider(photoUrl)
+                          //           : null,
+                          //       child: (photoUrl == null || photoUrl.isEmpty)
+                          //           ? SvgPicture.asset(
+                          //               'assets/profileIcon.svg',
+                          //               width: 60,
+                          //               height: 60,
+                          //             )
+                          //           : null,
+                          //     ),
+                          //     const SizedBox(height: 24),
+                          //     Text(
+                          //       currentUser.name,
+                          //       style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          //     ),
+                          //     Text(
+                          //       currentUser.email,
+                          //       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                          //     ),
+                          //   ],
+                          // ),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),
