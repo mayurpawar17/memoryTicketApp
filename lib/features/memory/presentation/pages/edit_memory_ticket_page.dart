@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:memory_ticket_app/core/colors/app_colors.dart';
 import 'package:memory_ticket_app/core/widgets/custom_app_bar.dart';
 import 'package:memory_ticket_app/core/widgets/custom_button.dart';
 import 'package:memory_ticket_app/core/utils/category_utils.dart';
@@ -216,6 +217,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
                     _buildTextField(
                       'Summer at the Amalfi Coast',
                       controller: _titleController,
+                      maxLength: 40,
                     ),
                     const SizedBox(height: 16),
                     Row(
@@ -254,6 +256,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
                               _buildTextField(
                                 'Positano, Italy',
                                 controller: _locationController,
+                                maxLength: 30,
                               ),
                             ],
                           ),
@@ -266,6 +269,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
                       'Describe the sights, sounds, and smells...',
                       controller: _descriptionController,
                       maxLines: 3,
+                      maxLength: 120,
                     ),
                     const SizedBox(height: 16),
                     Row(
@@ -332,7 +336,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
                             setState(() => _selectedTypeIndex = index);
                           }
                         },
-                        selectedColor: const Color(0xFF4E44E7),
+                        selectedColor: AppColors.primary,
                         labelStyle: TextStyle(
                           color: isSelected ? Colors.white : Colors.black87,
                           fontWeight:
@@ -429,11 +433,13 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
     TextEditingController? controller,
     IconData? suffixIcon,
     int maxLines = 1,
+    int? maxLength,
     VoidCallback? onTap,
   }) {
     return TextField(
       controller: controller,
       maxLines: maxLines,
+      maxLength: maxLength,
       onTap: onTap,
       readOnly: onTap != null,
       decoration: InputDecoration(
@@ -441,6 +447,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
         hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
         fillColor: const Color(0xFFF4F6FA),
         filled: true,
+        counterText: "",
         suffixIcon: suffixIcon != null
             ? Icon(suffixIcon, size: 18, color: Colors.black)
             : null,

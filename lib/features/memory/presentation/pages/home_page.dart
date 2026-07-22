@@ -10,14 +10,13 @@ import 'package:flutter/material.dart';
 import '../../../../core/colors/app_colors.dart';
 import '../../../../core/widgets/custom_category_chips.dart';
 import '../../../../core/utils/category_utils.dart';
+import '../../../timeline_v2/screens/timeline_page.dart';
 import '../widgets/home_header.dart';
 import '../widgets/memory_ticket_card.dart';
 
 import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:memory_ticket_app/features/auth/presentation/bloc/auth_state.dart';
 
-import 'package:memory_ticket_app/features/memory/presentation/pages/timeline_page.dart';
-import 'package:memory_ticket_app/features/memory/presentation/pages/map_page.dart';
 import 'package:memory_ticket_app/features/memory/presentation/pages/favorites_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -44,130 +43,128 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Timeline Button
-            _buildCircularButton(
-              context,
-              icon: Icons.timeline_rounded,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const TimelinePage()),
-              ),
-            ),
-            const SizedBox(width: 12),
-            // Map Button
-            // _buildCircularButton(
-            //   context,
-            //   icon: Icons.map_rounded,
-            //   onTap: () => Navigator.push(
-            //     context,
-            //     MaterialPageRoute(builder: (_) => const MapPage()),
-            //   ),
-            // ),
-            const SizedBox(width: 12),
-            // Favorites Button
-            _buildCircularButton(
-              context,
-              icon: Icons.favorite_rounded,
-              iconColor: Colors.redAccent,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const FavoritesPage()),
-              ),
-            ),
-            const SizedBox(width: 12),
-            // New Memory Button
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const NewMemoryTicketPage()),
-                );
-              },
-              child: Container(
-                height: 54,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withOpacity(0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add, color: Colors.white, size: 20),
-                    SizedBox(width: 8),
-                    Text(
-                      'New Memory',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
+    return BlocBuilder<MemoryBloc, MemoryState>(
+      builder: (context, state) {
+        final bool showFab = state is MemoryLoaded && state.memories.isNotEmpty;
+
+        return Scaffold(
+          floatingActionButton: showFab
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Timeline Button
+                      _buildCircularButton(
+                        context,
+                        icon: Icons.timeline_rounded,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const TimelinePage2()),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                      const SizedBox(width: 12),
+                      // Favorites Button
+                      _buildCircularButton(
+                        context,
+                        icon: Icons.favorite_rounded,
+                        iconColor: Colors.redAccent,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const FavoritesPage()),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      // New Memory Button
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const NewMemoryTicketPage()),
+                          );
+                        },
+                        child: Container(
+                          height: 54,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withOpacity(0.3),
+                                blurRadius: 12,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add, color: Colors.white, size: 20),
+                              SizedBox(width: 8),
+                              Text(
+                                'New Memory',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : null,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          body: MultiBlocListener(
+            listeners: [
+              BlocListener<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state is Authenticated) {
+                    // Trigger sync when user logs in or app starts authenticated
+                    context.read<MemoryBloc>().add(SyncMemoriesEvent());
+                  }
+                },
               ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: MultiBlocListener(
-        listeners: [
-          BlocListener<AuthBloc, AuthState>(
-            listener: (context, state) {
-              if (state is Authenticated) {
-                // Trigger sync when user logs in or app starts authenticated
-                context.read<MemoryBloc>().add(SyncMemoriesEvent());
-              }
-            },
-          ),
-          BlocListener<MemoryBloc, MemoryState>(
-            listener: (context, state) {
-              if (state is MemoryError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.message)),
-                );
-              }
-            },
-          ),
-        ],
-        child: SafeArea(
-          child: BlocBuilder<MemoryBloc, MemoryState>(
-            builder: (context, state) {
-              return CustomScrollView(
+              BlocListener<MemoryBloc, MemoryState>(
+                listener: (context, state) {
+                  if (state is MemoryError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.message)),
+                    );
+                  }
+                },
+              ),
+            ],
+            child: SafeArea(
+              child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: [
                   const SliverToBoxAdapter(child: HomeHeader()),
                   const SliverToBoxAdapter(child: SizedBox(height: 12)),
-                  SliverToBoxAdapter(
-                    child: CustomCategoryChips(
-                      categories: _categories,
-                      icons: _categories
-                          .map((c) => CategoryUtils.getIcon(c))
-                          .toList(),
-                      selectedIndex: _selectedIndex,
-                      onSelected: (index) {
-                        setState(() {
-                          _selectedIndex = index;
-                        });
-                      },
+                  if (state is MemoryLoaded && state.memories.isNotEmpty)
+                    SliverToBoxAdapter(
+                      child: CustomCategoryChips(
+                        categories: _categories,
+                        icons: _categories
+                            .map((c) => CategoryUtils.getIcon(c))
+                            .toList(),
+                        selectedIndex: _selectedIndex,
+                        onSelected: (index) {
+                          setState(() {
+                            _selectedIndex = index;
+                          });
+                        },
+                      ),
                     ),
-                  ),
                   const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
                   // Recent Section Header Row
@@ -183,16 +180,6 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Text('Recent Memories',
                                 style: theme.textTheme.titleLarge),
-                            // TextButton(
-                            //   onPressed: () {},
-                            //   child: Text(
-                            //     'See All',
-                            //     style: TextStyle(
-                            //       color: theme.colorScheme.primary,
-                            //       fontWeight: FontWeight.bold,
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       ),
@@ -262,11 +249,11 @@ class _HomePageState extends State<HomePage> {
                   if (state is! MemoryLoaded || state.memories.isNotEmpty)
                     const SliverToBoxAdapter(child: SizedBox(height: 100)),
                 ],
-              );
-            },
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

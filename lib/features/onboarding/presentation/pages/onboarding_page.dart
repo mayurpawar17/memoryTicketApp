@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../core/colors/app_colors.dart';
 
 import '../../../memory/presentation/pages/home_page.dart';
 
@@ -139,7 +140,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       width: isActive ? 24 : 8,
                       decoration: BoxDecoration(
                         color: isActive
-                            ? const Color(0xFF4D41DF)
+                            ? AppColors.primary
                             : const Color(0xFFC7C4D8),
                         borderRadius: BorderRadius.circular(4),
                       ),
@@ -181,12 +182,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       child: ElevatedButton(
                         onPressed: _handleNext,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4D41DF),
+                          backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           elevation: 0,
-                          shadowColor: const Color(
-                            0xFF6C63FF,
-                          ).withOpacity(0.15),
+                          shadowColor: AppColors.primary.withOpacity(0.15),
                           padding: const EdgeInsets.symmetric(horizontal: 48),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(24),
@@ -341,13 +340,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         children: [
                           const Icon(
                             Icons.restaurant,
-                            color: Color(0xFF4D41DF),
+                            color: AppColors.primary,
                           ),
                           Container(
                             height: 8,
                             width: 48,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF4D41DF).withOpacity(0.2),
+                              color: AppColors.primary.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
@@ -534,30 +533,63 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ),
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
           const Text(
-            'Relive your memories anytime.',
+            'Safe, Offline & Always Ready.',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 28,
-              height: 36 / 28,
+              fontSize: 24,
+              height: 32 / 24,
               fontWeight: FontWeight.w700,
               color: Color(0xFF191C1F),
             ),
           ),
-          const SizedBox(height: 16),
-          const Text(
-            'Your life\'s most precious tickets, available whenever you need a stroll down memory lane.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              height: 24 / 16,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFF464555),
-            ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildFeatureIcon(
+                Icons.cloud_done_rounded,
+                AppColors.primary,
+                "Cloud Backup",
+                small: true,
+              ),
+              const SizedBox(width: 32),
+              _buildFeatureIcon(
+                Icons.wifi_off_rounded,
+                const Color(0xFFF97316),
+                "Offline Access",
+                small: true,
+              ),
+            ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFeatureIcon(IconData icon, Color color, String label, {bool small = false}) {
+    return Column(
+      children: [
+        Container(
+          width: small ? 64 : 80,
+          height: small ? 64 : 80,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: color, size: small ? 32 : 40),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: small ? 12 : 14,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
+        ),
+      ],
     );
   }
 }

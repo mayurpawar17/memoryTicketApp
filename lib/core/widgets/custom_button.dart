@@ -39,15 +39,15 @@ class CustomButton extends StatelessWidget {
       return ElevatedButton.icon(
         style: buttonStyle,
         onPressed: onPressed,
-        icon: Icon(icon, size: 20, color: Colors.white),
-        label: Text(label, style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.white)),
+        icon: Icon(icon, size: 20),
+        label: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
       );
     }
 
     return ElevatedButton(
       style: buttonStyle,
       onPressed: onPressed,
-      child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.white)),
+      child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
     );
   }
 }

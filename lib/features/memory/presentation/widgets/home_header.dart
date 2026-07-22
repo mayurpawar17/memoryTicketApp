@@ -26,7 +26,7 @@ class HomeHeader extends StatelessWidget {
               children: [
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
-                    String greeting = 'Hello 👋';
+                    String greeting = 'Hello';
                     if (state is Authenticated) {
                       greeting = 'Hi, ${state.user.name.split(' ').first} 👋';
                     }

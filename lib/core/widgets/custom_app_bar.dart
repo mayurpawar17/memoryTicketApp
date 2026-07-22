@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../colors/app_colors.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -34,10 +35,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: actions,
       leading: leading ?? _buildDefaultLeading(context),
       centerTitle: centerTitle,
-      backgroundColor: backgroundColor ?? theme.colorScheme.surface,
+      backgroundColor: backgroundColor ?? AppColors.background,
       elevation: 0,
       scrolledUnderElevation: 1.0, // Clean Material 3 elevation tint on scroll
       systemOverlayStyle: systemOverlayStyle ?? SystemUiOverlayStyle.dark,
+      surfaceTintColor: Colors.transparent,
     );
   }
 

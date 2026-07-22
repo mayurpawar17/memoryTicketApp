@@ -15,7 +15,6 @@ class MemoryTicketCard extends StatelessWidget {
   final TicketType ticketType;
   final VoidCallback? onTap;
   final VoidCallback? onFavorite;
-  final VoidCallback? onMore;
   final String? heroTag;
 
   const MemoryTicketCard({
@@ -29,13 +28,11 @@ class MemoryTicketCard extends StatelessWidget {
     this.ticketType = TicketType.classicTicket,
     this.onTap,
     this.onFavorite,
-    this.onMore,
     this.heroTag,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final config = TicketStyleConfig.fromType(ticketType);
 
     return Container(
@@ -50,7 +47,7 @@ class MemoryTicketCard extends StatelessWidget {
         ],
       ),
       child: ClipPath(
-        clipper: StampTicketClipper(sidePunchYRatio: config.sidePunchYRatio),
+        clipper: config.clipper,
         child: Material(
           color: config.backgroundColor,
           child: InkWell(
@@ -59,171 +56,203 @@ class MemoryTicketCard extends StatelessWidget {
             highlightColor: Colors.transparent,
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                return Stack(
                   children: [
-                    // --- TOP SECTION: Visuals & Meta Typography ---
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Stack(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // --- TOP SECTION: Visuals & Meta Typography ---
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Hero(
-                                tag: heroTag ?? 'memory_image_${title}_$date',
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(6),
-                                  child: _buildImage(),
-                                ),
-                              ),
-                              if (config.mainIcon != null)
-                                Positioned(
-                                  top: 12,
-                                  right: 12,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.9),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      config.mainIcon,
-                                      color: config.accentColor,
-                                      size: 20,
+                              Stack(
+                                children: [
+                                  Hero(
+                                    tag: heroTag ?? 'memory_image_${title}_$date',
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(6),
+                                      child: _buildImage(),
                                     ),
                                   ),
+                                  if (config.mainIcon != null)
+                                    Positioned(
+                                      top: 12,
+                                      right: 12,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.9),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          config.mainIcon,
+                                          color: config.accentColor,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: config.textColor,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: -0.5,
+                                  fontFamily: config.fontFamily,
                                 ),
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    size: 12,
+                                    color: config.secondaryTextColor,
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Expanded(
+                                    child: Text(
+                                      location,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: config.secondaryTextColor,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Icon(
+                                    Icons.calendar_today,
+                                    size: 11,
+                                    color: config.secondaryTextColor,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    date,
+                                    style: TextStyle(
+                                      color: config.secondaryTextColor,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                          const SizedBox(height: 16),
-                          Text(
-                            title,
-                            style: TextStyle(
-                              color: config.textColor,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                size: 12,
-                                color: config.secondaryTextColor,
-                              ),
-                              const SizedBox(width: 2),
-                              Text(
-                                location,
-                                style: TextStyle(
-                                  color: config.secondaryTextColor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(width: 14),
-                              Icon(
-                                Icons.calendar_today,
-                                size: 11,
-                                color: config.secondaryTextColor,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                date,
-                                style: TextStyle(
-                                  color: config.secondaryTextColor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                        ),
 
-                    // --- MITER LAYER: Dotted Axis Separator ---
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Row(
-                        children: List.generate(
-                          (constraints.maxWidth / 7).floor(),
-                          (index) => Expanded(
-                            child: Container(
-                              color: index % 2 == 0
-                                  ? Colors.transparent
-                                  : config.accentColor.withOpacity(0.2),
-                              height: 1.5,
+                        // --- MITER LAYER: Dotted Axis Separator ---
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Row(
+                            children: List.generate(
+                              (constraints.maxWidth / 7).floor(),
+                              (index) => Expanded(
+                                child: Container(
+                                  color: index % 2 == 0
+                                      ? Colors.transparent
+                                      : config.accentColor.withOpacity(0.2),
+                                  height: 1.5,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
 
-                    // --- BOTTOM SECTION: Journal Entry & Controls ---
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.format_quote,
-                            size: 16,
-                            color: config.accentColor.withOpacity(0.3),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 6.0,
-                              right: 6.0,
-                            ),
-                            child: Text(
-                              description,
-                              style: TextStyle(
-                                color: config.secondaryTextColor,
-                                fontSize: 14,
-                                fontStyle: FontStyle.italic,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // --- BOTTOM SECTION: Journal Entry & Controls ---
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              IconButton(
-                                icon: Icon(
-                                  isFavorite
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: isFavorite
-                                      ? Colors.redAccent
-                                      : config.secondaryTextColor.withOpacity(0.5),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                                child: Text(
+                                  description,
+                                  style: TextStyle(
+                                    color: config.secondaryTextColor,
+                                    fontSize: 13,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                onPressed: onFavorite,
-                                constraints: const BoxConstraints(),
-                                padding: EdgeInsets.zero,
                               ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.more_vert,
-                                  color: config.secondaryTextColor.withOpacity(0.5),
-                                ),
-                                onPressed: onMore,
-                                constraints: const BoxConstraints(),
-                                padding: EdgeInsets.zero,
+                              const SizedBox(height: 10),
+                              if (config.showBarcode) _buildBarcode(config),
+                              if (config.showBarcode) const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      isFavorite
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color: isFavorite
+                                          ? Colors.redAccent
+                                          : config.secondaryTextColor.withOpacity(0.5),
+                                    ),
+                                    onPressed: onFavorite,
+                                    constraints: const BoxConstraints(),
+                                    padding: EdgeInsets.zero,
+                                  ),
+                                  if (config.secondaryIcon != null)
+                                    Icon(
+                                      config.secondaryIcon,
+                                      size: 16,
+                                      color: config.accentColor.withOpacity(0.3),
+                                    ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
+                    if (ticketType == TicketType.flightBoardingPass)
+                      Positioned(
+                        right: 80,
+                        top: 0,
+                        bottom: 0,
+                        child: CustomPaint(
+                          painter: DashedLinePainter(
+                            color: config.accentColor.withOpacity(0.2),
+                          ),
+                        ),
+                      ),
                   ],
                 );
               },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBarcode(TicketStyleConfig config) {
+    return Container(
+      height: 40,
+      width: double.infinity,
+      child: Row(
+        children: List.generate(
+          40,
+          (index) => Expanded(
+            flex: (index % 3 == 0) ? 2 : 1,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 1),
+              color: index % 2 == 0 ? config.textColor.withOpacity(0.8) : Colors.transparent,
             ),
           ),
         ),
@@ -294,67 +323,22 @@ class MemoryTicketCard extends StatelessWidget {
   }
 }
 
-/// Precise pathing matrix to construct physical top/bottom perforation cuts
-class StampTicketClipper extends CustomClipper<Path> {
-  final double sidePunchYRatio;
-
-  const StampTicketClipper({required this.sidePunchYRatio});
+class DashedLinePainter extends CustomPainter {
+  final Color color;
+  DashedLinePainter({required this.color});
 
   @override
-  Path getClip(Size size) {
-    final path = Path();
-    const double rippleRadius = 4.0;
-    const double sidePunchRadius = 8.0;
-
-    // Top Header Edge Stamp Perforations
-    path.moveTo(0, 0);
-    double x = 0;
-    while (x < size.width) {
-      path.lineTo(x + rippleRadius, 0);
-      path.arcToPoint(
-        Offset(x + (rippleRadius * 3), 0),
-        radius: const Radius.circular(rippleRadius),
-        clockwise: false,
-      );
-      x += rippleRadius * 4;
+  void paint(Canvas canvas, Size size) {
+    double dashHeight = 5, dashSpace = 3, startY = 0;
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1;
+    while (startY < size.height) {
+      canvas.drawLine(Offset(0, startY), Offset(0, startY + dashHeight), paint);
+      startY += dashHeight + dashSpace;
     }
-    path.lineTo(size.width, 0);
-
-    // Right Side Dynamic Alignment Border Punch
-    final double punchY = size.height * sidePunchYRatio;
-    path.lineTo(size.width, punchY - sidePunchRadius);
-    path.arcToPoint(
-      Offset(size.width, punchY + sidePunchRadius),
-      radius: const Radius.circular(sidePunchRadius),
-      clockwise: false,
-    );
-    path.lineTo(size.width, size.height);
-
-    // Bottom Base Stamp Perforations (Reverse Sweep Axis)
-    double bx = size.width;
-    while (bx > 0) {
-      path.lineTo(bx - rippleRadius, size.height);
-      path.arcToPoint(
-        Offset(bx - (rippleRadius * 3), size.height),
-        radius: const Radius.circular(rippleRadius),
-        clockwise: false,
-      );
-      bx -= rippleRadius * 4;
-    }
-    path.lineTo(0, size.height);
-
-    // Left Side Dynamic Alignment Border Punch
-    path.lineTo(0, punchY + sidePunchRadius);
-    path.arcToPoint(
-      Offset(0, punchY - sidePunchRadius),
-      radius: const Radius.circular(sidePunchRadius),
-      clockwise: false,
-    );
-
-    path.close();
-    return path;
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

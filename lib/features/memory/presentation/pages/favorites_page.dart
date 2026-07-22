@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_ticket_app/core/colors/app_theme.dart';
+import 'package:memory_ticket_app/core/widgets/custom_app_bar.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_state.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_event.dart';
@@ -14,15 +15,7 @@ class FavoritesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.bgLight,
-      appBar: AppBar(
-        title: const Text(
-          "Favorite Memories",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: AppTheme.bgLight,
-        elevation: 0,
-        centerTitle: true,
-      ),
+      appBar: CustomAppBar(title: "Favorite Memories"),
       body: BlocBuilder<MemoryBloc, MemoryState>(
         builder: (context, state) {
           if (state is MemoryLoading) {

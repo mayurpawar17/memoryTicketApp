@@ -1,19 +1,20 @@
 import 'dart:ui';
 
 class AppColors {
-  static const Color background = Color(0xFF000000); // True Black
-  static const Color surface = Color(0xFF121212); // Elevated dark gray
-  static const Color surfaceVariant = Color(
-    0xFF1E1E1E,
-  ); // Lighter gray for cards
+  // Main background for all scaffold pages
+  static const Color background = Color(0xFFF8F0E3); 
+  
+  // Surface colors for cards and containers
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color surfaceVariant = Color(0xFFF2EADC);
 
-  // Neon/Vibrant Accents for high contrast on black
-  static const Color primary = Color(0xFF7B5BF6); // Electric Yellow
-  // static const Color primary = Color(0xFFDCFF00); // Electric Yellow
-  static const Color secondary = Color(0xFF7B5BF6); // Deep Purple
-  static const Color error = Color(0xFFFF453A); // Vivid Red
+  // Highlight color for buttons, selected items, etc.
+  static const Color primary = Color(0xFF002A8C); 
+  
+  static const Color secondary = Color(0xFF7B5BF6); 
+  static const Color error = Color(0xFFFF453A);
 
-  // Text colors
-  static const Color textPrimary = Color(0xFFF5F5F7);
-  static const Color textSecondary = Color(0xFF8E8E93);
+  // Text colors (Optimized for light background)
+  static const Color textPrimary = Color(0xFF1C1C1E);
+  static const Color textSecondary = Color(0xFF636366);
 }
