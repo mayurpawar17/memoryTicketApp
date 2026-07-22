@@ -46,24 +46,24 @@ flutter:
     - assets/
 
 flutter_native_splash:
-  color: "#4D41DF"
-  image: assets/memoryTicketAppIcon.png
-  android_gravity: fill
-  ios_content_mode: scaleAspectFill
+  color: "#F8F0E3"
+  image: assets/app_icon.png
+  android_gravity: center
+  ios_content_mode: center
   
   android_12:
-    image: assets/memoryTicketAppIcon.png
-    icon_background_color: "#4D41DF"
+    image: assets/app_icon.png
+    icon_background_color: "#F8F0E3"
   
   fullscreen: true
 
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: false
-  image_path: "assets/memoryTicketAppIcon.png"
+  image_path: "assets/app_icon.png"
   min_sdk_android: 21
-  adaptive_icon_background: "#4D41DF"
-  adaptive_icon_foreground: "assets/memoryTicketAppIcon.png"
+  adaptive_icon_background: "#F8F0E3"
+  adaptive_icon_foreground: "assets/app_icon.png"
 
   
   
