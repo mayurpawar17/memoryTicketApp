@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:memory_ticket_app/core/secrets/app_secrets.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/data/datasources/auth_remote_data_source.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
@@ -102,5 +103,5 @@ Future<void> init() async {
 
   // --- EXTERNAL ---
   sl.registerLazySingleton(() => Supabase.instance.client);
-  sl.registerLazySingleton(() => GoogleSignIn());
+  sl.registerLazySingleton(() => GoogleSignIn(serverClientId: AppSecrets.GOOGLE_WEB_CLIENT_ID));
 }

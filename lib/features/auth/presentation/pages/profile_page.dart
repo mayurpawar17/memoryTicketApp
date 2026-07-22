@@ -70,49 +70,69 @@ class ProfilePage extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            return Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundColor: Colors.grey[200],
-                    backgroundImage: user.photoUrl != null
-                        ? CachedNetworkImageProvider(user.photoUrl!)
-                        : null,
-                    child: user.photoUrl == null
-                        ? SvgPicture.asset(
-                            'assets/profileIcon.svg',
-                            width: 60,
-                            height: 60,
-                          )
-                        : null,
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              const SizedBox(height: 20),
+                              CircleAvatar(
+                                radius: 60,
+                                backgroundColor: Colors.grey[200],
+                                backgroundImage: user!.photoUrl != null
+                                    ? CachedNetworkImageProvider(user.photoUrl!)
+                                    : null,
+                                child: user.photoUrl == null
+                                    ? SvgPicture.asset(
+                                        'assets/profileIcon.svg',
+                                        width: 60,
+                                        height: 60,
+                                      )
+                                    : null,
+                              ),
+                              const SizedBox(height: 24),
+                              Text(
+                                user.name,
+                                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                user.email,
+                                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              const SyncButton(),
+                              const SizedBox(height: 16),
+                              AuthButton(
+                                text: 'Logout',
+                                color: Colors.red[50],
+                                textColor: Colors.red,
+                                isLoading: isLoggingOut,
+                                onPressed: () {
+                                  context.read<AuthBloc>().add(LogoutRequested());
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    user.name,
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    user.email,
-                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                  ),
-                  const Spacer(),
-                  const SyncButton(),
-                  const SizedBox(height: 16),
-                  AuthButton(
-                    text: 'Logout',
-                    color: Colors.red[50],
-                    textColor: Colors.red,
-                    isLoading: isLoggingOut,
-                    onPressed: () {
-                      context.read<AuthBloc>().add(LogoutRequested());
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                ],
-              ),
+                );
+              },
             );
           },
         ),

@@ -92,99 +92,111 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
     return Scaffold(
       appBar: CustomAppBar(title: "Ticket Stub"),
       body: SafeArea(
-        child: Column(
-          children: [
-            const Spacer(),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(height: 16),
 
-            // Wrap the ticket card in RepaintBoundary for rasterization
-            RepaintBoundary(
-              key: _ticketKey,
-              child: MemoryTicketCard(
-                imagePath: _memory.imagePath,
-                title: _memory.title,
-                location: _memory.location,
-                date: _memory.date,
-                description: _memory.description,
-                isFavorite: _memory.isFavorite,
-                ticketType: _memory.ticketType,
-                heroTag: 'memory_image_${_memory.id}',
-                onFavorite: () {
-                  context.read<MemoryBloc>().add(
-                        ToggleFavoriteEvent(_memory.id, !_memory.isFavorite),
-                      );
-                  setState(() {
-                    _memory = Memory(
-                      id: _memory.id,
-                      title: _memory.title,
-                      description: _memory.description,
-                      location: _memory.location,
-                      date: _memory.date,
-                      imagePath: _memory.imagePath,
-                      category: _memory.category,
-                      ticketType: _memory.ticketType,
-                      isFavorite: !_memory.isFavorite,
-                    );
-                  });
-                },
+                    // Wrap the ticket card in RepaintBoundary for rasterization
+                    RepaintBoundary(
+                      key: _ticketKey,
+                      child: MemoryTicketCard(
+                        imagePath: _memory.imagePath,
+                        title: _memory.title,
+                        location: _memory.location,
+                        date: _memory.date,
+                        description: _memory.description,
+                        isFavorite: _memory.isFavorite,
+                        ticketType: _memory.ticketType,
+                        heroTag: 'memory_image_${_memory.id}',
+                        onFavorite: () {
+                          context.read<MemoryBloc>().add(
+                                ToggleFavoriteEvent(_memory.id, !_memory.isFavorite),
+                              );
+                          setState(() {
+                            _memory = Memory(
+                              id: _memory.id,
+                              title: _memory.title,
+                              description: _memory.description,
+                              location: _memory.location,
+                              date: _memory.date,
+                              imagePath: _memory.imagePath,
+                              category: _memory.category,
+                              ticketType: _memory.ticketType,
+                              isFavorite: !_memory.isFavorite,
+                            );
+                          });
+                        },
+                      ),
+                    ),
+
+                    // --- Action Control Row ---
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 24.0, top: 16.0, left: 40, right: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Share Button (Ultra-HD Image)
+                          IconButton(
+                            tooltip: "Share Ticket Image",
+                            icon: const FaIcon(
+                              FontAwesomeIcons.shareNodes,
+                              size: 26,
+                              color: Colors.black26,
+                            ),
+                            onPressed: () =>
+                                _handleExport(TicketExportService.shareAsImage),
+                          ),
+
+                          // Edit Button
+                          IconButton(
+                            tooltip: "Edit Ticket",
+                            icon: const Icon(
+                              Icons.edit,
+                              size: 26,
+                              color: Colors.black26,
+                            ),
+                            onPressed: () async {
+                              final updatedMemory = await Navigator.push<Memory>(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => EditMemoryTicketPage(memory: _memory),
+                                ),
+                              );
+                              if (updatedMemory != null) {
+                                setState(() {
+                                  _memory = updatedMemory;
+                                });
+                              }
+                            },
+                          ),
+
+                          // Delete Button
+                          IconButton(
+                            tooltip: "Delete Ticket",
+                            icon: const Icon(
+                              Icons.delete,
+                              size: 26,
+                              color: Colors.black26,
+                            ),
+                            onPressed: () => _showDeleteDialog(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const Spacer(),
-
-            // --- Action Control Row ---
-            Padding(
-              padding: const EdgeInsets.only(bottom: 32.0, left: 40, right: 40),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Share Button (Ultra-HD Image)
-                  IconButton(
-                    tooltip: "Share Ticket Image",
-                    icon: const FaIcon(
-                      FontAwesomeIcons.shareNodes,
-                      size: 26,
-                      color: Colors.black26,
-                    ),
-                    onPressed: () =>
-                        _handleExport(TicketExportService.shareAsImage),
-                  ),
-
-                  // Edit Button
-                  IconButton(
-                    tooltip: "Edit Ticket",
-                    icon: const Icon(
-                      Icons.edit,
-                      size: 26,
-                      color: Colors.black26,
-                    ),
-                    onPressed: () async {
-                      final updatedMemory = await Navigator.push<Memory>(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => EditMemoryTicketPage(memory: _memory),
-                        ),
-                      );
-                      if (updatedMemory != null) {
-                        setState(() {
-                          _memory = updatedMemory;
-                        });
-                      }
-                    },
-                  ),
-
-                  // Delete Button
-                  IconButton(
-                    tooltip: "Delete Ticket",
-                    icon: const Icon(
-                      Icons.delete,
-                      size: 26,
-                      color: Colors.black26,
-                    ),
-                    onPressed: () => _showDeleteDialog(context),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
