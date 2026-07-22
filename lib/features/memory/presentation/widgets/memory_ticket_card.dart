@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../domain/entities/ticket_type.dart';
 import 'ticket_style_config.dart';
 
@@ -36,7 +37,7 @@ class MemoryTicketCard extends StatelessWidget {
     final config = TicketStyleConfig.fromType(ticketType);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -203,7 +204,10 @@ class MemoryTicketCard extends StatelessWidget {
                                           ? Colors.redAccent
                                           : config.secondaryTextColor.withOpacity(0.5),
                                     ),
-                                    onPressed: onFavorite,
+                                    onPressed: () {
+                                      HapticFeedback.mediumImpact();
+                                      if (onFavorite != null) onFavorite!();
+                                    },
                                     constraints: const BoxConstraints(),
                                     padding: EdgeInsets.zero,
                                   ),

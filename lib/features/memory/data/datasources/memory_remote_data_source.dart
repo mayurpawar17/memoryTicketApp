@@ -22,9 +22,15 @@ class MemoryRemoteDataSourceImpl implements MemoryRemoteDataSource {
     try {
       final data = memory.toMap();
       data['user_id'] = userId;
+      
       // Map local to remote field names if necessary. 
-      // Our model uses 'imagePath' but remote might use 'image_url'
-      data['image_url'] = data.remove('imagePath');
+      // Only set image_url if it's a remote URL. 
+      // Local paths (e.g., from ImagePicker) should not be stored in the remote database.
+      final imagePath = data.remove('imagePath');
+      if (imagePath != null && imagePath.startsWith('http')) {
+        data['image_url'] = imagePath;
+      }
+
       data['is_favorite'] = data.remove('isFavorite') == 1;
       data['ticket_type'] = data.remove('ticketType');
 
@@ -66,6 +72,24 @@ class MemoryRemoteDataSourceImpl implements MemoryRemoteDataSource {
         throw Exception('Image file not found at $localPath');
       }
 
+      // 1. Check if there's an existing image for this memory and delete it to avoid duplicates
+      final existingResponse = await supabaseClient
+          .from('memories')
+          .select('image_url')
+          .eq('id', memoryId)
+          .maybeSingle();
+
+      if (existingResponse != null && existingResponse['image_url'] != null) {
+        final String oldImageUrl = existingResponse['image_url'];
+        if (oldImageUrl.contains('memory_images/')) {
+          final oldPath = oldImageUrl.split('memory_images/').last;
+          final decodedOldPath = Uri.decodeComponent(oldPath);
+          await supabaseClient.storage.from('memory_images').remove([decodedOldPath]);
+          _logger.i('Deleted old image from storage before uploading new one: $decodedOldPath', tag: _tag);
+        }
+      }
+
+      // 2. Upload new image
       final fileName = '${DateTime.now().millisecondsSinceEpoch}_${memoryId}.jpg';
       final path = '$userId/$fileName';
 
@@ -87,10 +111,30 @@ class MemoryRemoteDataSourceImpl implements MemoryRemoteDataSource {
   @override
   Future<void> deleteRemoteMemory(String memoryId) async {
     try {
+      // 1. Fetch memory to get image URL before deleting
+      final response = await supabaseClient
+          .from('memories')
+          .select('image_url')
+          .eq('id', memoryId)
+          .maybeSingle();
+
+      if (response != null && response['image_url'] != null) {
+        final String imageUrl = response['image_url'];
+        // 2. Delete from storage if it's a Supabase storage URL
+        if (imageUrl.contains('memory_images/')) {
+          final path = imageUrl.split('memory_images/').last;
+          // Decode URL component in case of special characters
+          final decodedPath = Uri.decodeComponent(path);
+          await supabaseClient.storage.from('memory_images').remove([decodedPath]);
+          _logger.i('Deleted image from storage: $decodedPath', tag: _tag);
+        }
+      }
+
+      // 3. Delete record from database
       await supabaseClient.from('memories').delete().eq('id', memoryId);
       _logger.i('Deleted remote memory $memoryId', tag: _tag);
-    } catch (e) {
-      _logger.e('Failed to delete remote memory $memoryId', tag: _tag, error: e);
+    } catch (e, stack) {
+      _logger.e('Failed to delete remote memory $memoryId', tag: _tag, error: e, stackTrace: stack);
     }
   }
 }

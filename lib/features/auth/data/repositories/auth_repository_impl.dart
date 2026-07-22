@@ -64,6 +64,7 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  /*
   @override
   Future<void> forgotPassword(String email) async {
     try {
@@ -74,6 +75,7 @@ class AuthRepositoryImpl implements AuthRepository {
       throw Exception('An error occurred while sending password reset email');
     }
   }
+  */
 
   @override
   Future<UserEntity?> getCurrentUser() async {

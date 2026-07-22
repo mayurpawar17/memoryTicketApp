@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,6 +29,7 @@ class EditMemoryTicketPage extends StatefulWidget {
 }
 
 class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
+  bool _isSaving = false;
   final List<TicketType> _ticketTypes = TicketType.values;
   late int _selectedTypeIndex;
   String? _imagePath;
@@ -149,6 +151,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
   }
 
   void _updateMemory() {
+    if (_isSaving) return;
     List<String> missingFields = [];
     if (_imagePath == null) missingFields.add('Photo');
     if (_titleController.text.trim().isEmpty) missingFields.add('Title');
@@ -166,6 +169,12 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
       );
       return;
     }
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    HapticFeedback.mediumImpact();
 
     final updatedMemory = Memory(
       id: widget.memory.id,
@@ -189,7 +198,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
       appBar: CustomAppBar(title: "Edit Memory"),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -205,7 +214,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
 
               // --- FORM FIELDS BLOCK ---
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -228,19 +237,41 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
                             children: [
                               _buildFormLabel('DATE'),
                               _buildTextField(
-                                'mm/dd/yyyy',
+                                'mm/dd/yyyy, --:-- --',
                                 controller: _dateController,
                                 suffixIcon: Icons.calendar_today_outlined,
                                 onTap: () async {
+                                  DateTime initialDate;
+                                  try {
+                                    initialDate = DateFormat('MMM dd yyyy, hh:mm a').parse(_dateController.text);
+                                  } catch (e) {
+                                    initialDate = DateTime.now();
+                                  }
+                                  
                                   final date = await showDatePicker(
                                     context: context,
-                                    initialDate: DateFormat('MMM dd, yyyy').parse(_dateController.text),
+                                    initialDate: initialDate,
                                     firstDate: DateTime(2000),
                                     lastDate: DateTime(2100),
                                   );
                                   if (date != null) {
-                                    _dateController.text =
-                                        DateFormat('MMM dd, yyyy').format(date);
+                                    if (!mounted) return;
+                                    final time = await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.fromDateTime(initialDate),
+                                    );
+                                    if (time != null) {
+                                      final dateTime = DateTime(
+                                        date.year,
+                                        date.month,
+                                        date.day,
+                                        time.hour,
+                                        time.minute,
+                                      );
+                                      _dateController.text =
+                                          DateFormat('MMM dd yyyy, hh:mm a')
+                                              .format(dateTime);
+                                    }
                                   }
                                 },
                               ),
@@ -288,7 +319,8 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
                                   'Nature',
                                   'Work',
                                   'Family',
-                                  'Pets'
+                                  'Pets',
+                                  'Personal'
                                 ],
                                 onChanged: (val) {
                                   if (val != null) {
@@ -333,6 +365,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
                         selected: isSelected,
                         onSelected: (selected) {
                           if (selected) {
+                            HapticFeedback.lightImpact();
                             setState(() => _selectedTypeIndex = index);
                           }
                         },
@@ -384,7 +417,7 @@ class _EditMemoryTicketPageState extends State<EditMemoryTicketPage> {
                         ? 'Home Sanctuary'
                         : _locationController.text,
                     date: _dateController.text.isEmpty
-                        ? DateFormat('MMM dd, yyyy').format(DateTime.now())
+                        ? DateFormat('MMM dd yyyy, hh:mm a').format(DateTime.now())
                         : _dateController.text,
                     description: _descriptionController.text.isEmpty
                         ? 'A moment captured in time, waiting for its story to be told...'

@@ -3,10 +3,10 @@ import 'package:path/path.dart';
 import '../models/memory_model.dart';
 
 abstract class MemoryLocalDataSource {
-  Future<List<MemoryModel>> getMemories();
-  Future<void> saveMemory(MemoryModel memory);
-  Future<void> deleteMemory(String id);
-  Future<void> updateFavorite(String id, bool isFavorite);
+  Future<List<MemoryModel>> getMemories(String userId);
+  Future<void> saveMemory(MemoryModel memory, String userId);
+  Future<void> deleteMemory(String id, String userId);
+  Future<void> updateFavorite(String id, bool isFavorite, String userId);
 }
 
 class MemoryLocalDataSourceImpl implements MemoryLocalDataSource {
@@ -24,11 +24,12 @@ class MemoryLocalDataSourceImpl implements MemoryLocalDataSource {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: (db, version) {
         return db.execute('''
           CREATE TABLE memories(
             id TEXT PRIMARY KEY,
+            userId TEXT,
             title TEXT,
             description TEXT,
             location TEXT,
@@ -44,41 +45,56 @@ class MemoryLocalDataSourceImpl implements MemoryLocalDataSource {
         if (oldVersion < 2) {
           await db.execute('ALTER TABLE memories ADD COLUMN ticketType TEXT');
         }
+        if (oldVersion < 3) {
+          await db.execute('ALTER TABLE memories ADD COLUMN userId TEXT');
+          // Update existing records to 'guest' or some default if needed
+          await db.update('memories', {'userId': 'guest'});
+        }
       },
     );
   }
 
   @override
-  Future<List<MemoryModel>> getMemories() async {
+  Future<List<MemoryModel>> getMemories(String userId) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('memories');
+    final List<Map<String, dynamic>> maps = await db.query(
+      'memories',
+      where: 'userId = ?',
+      whereArgs: [userId],
+    );
     return maps.map((map) => MemoryModel.fromMap(map)).toList();
   }
 
   @override
-  Future<void> saveMemory(MemoryModel memory) async {
+  Future<void> saveMemory(MemoryModel memory, String userId) async {
     final db = await database;
+    final data = memory.toMap();
+    data['userId'] = userId;
     await db.insert(
       'memories',
-      memory.toMap(),
+      data,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
   @override
-  Future<void> deleteMemory(String id) async {
+  Future<void> deleteMemory(String id, String userId) async {
     final db = await database;
-    await db.delete('memories', where: 'id = ?', whereArgs: [id]);
+    await db.delete(
+      'memories',
+      where: 'id = ? AND userId = ?',
+      whereArgs: [id, userId],
+    );
   }
 
   @override
-  Future<void> updateFavorite(String id, bool isFavorite) async {
+  Future<void> updateFavorite(String id, bool isFavorite, String userId) async {
     final db = await database;
     await db.update(
       'memories',
       {'isFavorite': isFavorite ? 1 : 0},
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'id = ? AND userId = ?',
+      whereArgs: [id, userId],
     );
   }
 }

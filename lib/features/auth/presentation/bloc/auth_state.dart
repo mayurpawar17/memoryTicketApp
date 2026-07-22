@@ -6,7 +6,7 @@ enum AuthLoadingType {
   register,
   google,
   logout,
-  forgotPassword,
+  // forgotPassword,
 }
 
 abstract class AuthState extends Equatable {
@@ -48,6 +48,7 @@ class AuthFailure extends AuthState {
   List<Object?> get props => [message];
 }
 
+/*
 /// A specific state for successful password reset email sent
 class ForgotPasswordSuccess extends AuthState {
   final String message;
@@ -57,3 +58,4 @@ class ForgotPasswordSuccess extends AuthState {
   @override
   List<Object?> get props => [message];
 }
+*/

@@ -24,30 +24,34 @@ class FavoritesPage extends StatelessWidget {
             final favorites = state.memories.where((m) => m.isFavorite).toList();
 
             if (favorites.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.favorite_border_rounded,
-                      size: 64,
-                      color: Colors.grey[300],
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      "No favorites yet",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.favorite_border_rounded,
+                        size: 64,
+                        color: Colors.grey[300],
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      "Tap the heart on any memory to save it here.",
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      const Text(
+                        "No favorites yet",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        "Tap the heart on any memory to save it here.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }

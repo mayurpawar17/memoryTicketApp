@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:memory_ticket_app/core/colors/app_colors.dart';
 
 class CustomCategoryChips extends StatelessWidget {
@@ -54,6 +55,7 @@ class CustomCategoryChips extends StatelessWidget {
               selected: isSelected,
               onSelected: (bool selected) {
                 if (selected) {
+                  HapticFeedback.lightImpact();
                   onSelected(index);
                 }
               },

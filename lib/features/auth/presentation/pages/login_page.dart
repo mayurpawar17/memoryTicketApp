@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
         },
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(16.0),
             child: Form(
               key: _formKey,
               child: Column(
@@ -99,18 +99,18 @@ class _LoginPageState extends State<LoginPage> {
                       return null;
                     },
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const ForgotPasswordPage()),
-                        );
-                      },
-                      child: const Text('Forgot Password?'),
-                    ),
-                  ),
+                  // Align(
+                  //   alignment: Alignment.centerRight,
+                  //   child: TextButton(
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(builder: (_) => const ForgotPasswordPage()),
+                  //       );
+                  //     },
+                  //     child: const Text('Forgot Password?'),
+                  //   ),
+                  // ),
                   const SizedBox(height: 24),
                   BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {

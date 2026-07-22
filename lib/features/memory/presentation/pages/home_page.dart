@@ -1,5 +1,6 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memory_ticket_app/features/memory/domain/entities/memory.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_bloc.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_event.dart';
 import 'package:memory_ticket_app/features/memory/presentation/bloc/memory_state.dart';
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage> {
     'Work',
     'Family',
     'Pets',
+    'Personal',
   ];
   int _selectedIndex = 0;
 
@@ -45,12 +47,16 @@ class _HomePageState extends State<HomePage> {
 
     return BlocBuilder<MemoryBloc, MemoryState>(
       builder: (context, state) {
-        final bool showFab = state is MemoryLoaded && state.memories.isNotEmpty;
+        final List<Memory> currentMemories = state is MemoryLoaded
+            ? state.memories
+            : (state is MemorySyncing ? state.memories : []);
+        final bool hasMemories = currentMemories.isNotEmpty;
+        final bool showFab = hasMemories;
 
         return Scaffold(
           floatingActionButton: showFab
               ? Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -129,8 +135,9 @@ class _HomePageState extends State<HomePage> {
               BlocListener<AuthBloc, AuthState>(
                 listener: (context, state) {
                   if (state is Authenticated) {
-                    // Trigger sync when user logs in or app starts authenticated
                     context.read<MemoryBloc>().add(SyncMemoriesEvent());
+                  } else if (state is GuestMode || state is Unauthenticated) {
+                    context.read<MemoryBloc>().add(LoadMemories());
                   }
                 },
               ),
@@ -150,7 +157,7 @@ class _HomePageState extends State<HomePage> {
                 slivers: [
                   const SliverToBoxAdapter(child: HomeHeader()),
                   const SliverToBoxAdapter(child: SizedBox(height: 12)),
-                  if (state is MemoryLoaded && state.memories.isNotEmpty)
+                  if (hasMemories)
                     SliverToBoxAdapter(
                       child: CustomCategoryChips(
                         categories: _categories,
@@ -168,11 +175,11 @@ class _HomePageState extends State<HomePage> {
                   const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
                   // Recent Section Header Row
-                  if (state is MemoryLoaded && state.memories.isNotEmpty)
+                  if (hasMemories)
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 24.0,
+                          horizontal: 16.0,
                           vertical: 8.0,
                         ),
                         child: Row(
@@ -193,19 +200,19 @@ class _HomePageState extends State<HomePage> {
                     SliverToBoxAdapter(
                       child: Center(child: Text(state.message)),
                     )
-                  else if (state is MemoryLoaded)
+                  else if (hasMemories)
                     () {
                       final selectedCategory = _categories[_selectedIndex];
                       final filteredMemories = selectedCategory == 'All'
-                          ? state.memories
-                          : state.memories
+                          ? currentMemories
+                          : currentMemories
                               .where((m) => m.category == selectedCategory)
                               .toList();
 
                       if (filteredMemories.isEmpty) {
                         return _buildEmptyState(
                           context,
-                          isFilter: state.memories.isNotEmpty,
+                          isFilter: currentMemories.isNotEmpty,
                         );
                       }
 
@@ -244,9 +251,9 @@ class _HomePageState extends State<HomePage> {
                       );
                     }()
                   else
-                    const SliverToBoxAdapter(child: SizedBox.shrink()),
+                    _buildEmptyState(context, isFilter: false),
 
-                  if (state is! MemoryLoaded || state.memories.isNotEmpty)
+                  if (!hasMemories || state is! MemoryLoading)
                     const SliverToBoxAdapter(child: SizedBox(height: 100)),
                 ],
               ),
@@ -262,7 +269,7 @@ class _HomePageState extends State<HomePage> {
       hasScrollBody: false,
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

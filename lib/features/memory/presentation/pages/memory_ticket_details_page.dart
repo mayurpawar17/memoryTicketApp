@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:memory_ticket_app/core/widgets/custom_app_bar.dart';
@@ -39,6 +40,7 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
       confirmText: "Delete",
       confirmColor: Colors.redAccent,
       onConfirm: () {
+        HapticFeedback.heavyImpact();
         context.read<MemoryBloc>().add(DeleteMemoryEvent(_memory.id));
         Navigator.pop(context); // Go back to Home
       },
@@ -117,7 +119,7 @@ class _MemoryTicketDetailsScreenState extends State<MemoryTicketDetailsScreen> {
 
                     // --- Action Control Row ---
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 24.0, top: 16.0, left: 40, right: 40),
+                      padding: const EdgeInsets.only(bottom: 24.0, top: 16.0, left: 16, right: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

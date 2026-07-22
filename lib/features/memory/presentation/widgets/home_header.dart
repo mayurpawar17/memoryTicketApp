@@ -28,7 +28,7 @@ class HomeHeader extends StatelessWidget {
                   builder: (context, state) {
                     String greeting = 'Hello';
                     if (state is Authenticated) {
-                      greeting = 'Hi, ${state.user.name.split(' ').first} 👋';
+                      greeting = 'Hi, ${state.user.name.split(' ').first}';
                     }
                     return Text(
                       greeting,

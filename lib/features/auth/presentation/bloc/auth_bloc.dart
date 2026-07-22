@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_ticket_app/core/utils/app_logger.dart';
-import 'package:memory_ticket_app/features/auth/domain/usecases/forgot_password_usecase.dart';
+// import 'package:memory_ticket_app/features/auth/domain/usecases/forgot_password_usecase.dart';
 import 'package:memory_ticket_app/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:memory_ticket_app/features/auth/domain/usecases/google_login_usecase.dart';
 import 'package:memory_ticket_app/features/auth/domain/usecases/is_logged_in_usecase.dart';
@@ -16,7 +16,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUseCase registerUseCase;
   final GoogleLoginUseCase googleLoginUseCase;
   final LogoutUseCase logoutUseCase;
-  final ForgotPasswordUseCase forgotPasswordUseCase;
+  // final ForgotPasswordUseCase forgotPasswordUseCase;
   final GetCurrentUserUseCase getCurrentUserUseCase;
   final IsLoggedInUseCase isLoggedInUseCase;
 
@@ -28,7 +28,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.registerUseCase,
     required this.googleLoginUseCase,
     required this.logoutUseCase,
-    required this.forgotPasswordUseCase,
+    // required this.forgotPasswordUseCase,
     required this.getCurrentUserUseCase,
     required this.isLoggedInUseCase,
   }) : super(AuthInitial()) {
@@ -37,7 +37,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<RegisterRequested>(_onRegisterRequested);
     on<GoogleLoginRequested>(_onGoogleLoginRequested);
     on<LogoutRequested>(_onLogoutRequested);
-    on<ForgotPasswordRequested>(_onForgotPasswordRequested);
+    // on<ForgotPasswordRequested>(_onForgotPasswordRequested);
   }
 
   @override
@@ -113,6 +113,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+/*
   Future<void> _onForgotPasswordRequested(ForgotPasswordRequested event, Emitter<AuthState> emit) async {
     emit(const AuthLoading(loadingType: AuthLoadingType.forgotPassword));
     try {
@@ -123,4 +124,5 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthFailure(message: e.toString().replaceFirst('Exception: ', '')));
     }
   }
+*/
 }

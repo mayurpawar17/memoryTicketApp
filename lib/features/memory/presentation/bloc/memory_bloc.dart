@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/entities/memory.dart';
 import '../../domain/usecases/get_memories.dart';
 import '../../domain/usecases/save_memory.dart';
 import '../../domain/usecases/delete_memory.dart';
@@ -31,7 +32,14 @@ class MemoryBloc extends Bloc<MemoryEvent, MemoryState> {
 
   Future<void> _onSyncMemories(SyncMemoriesEvent event, Emitter<MemoryState> emit) async {
     final currentState = state;
-    emit(MemorySyncing());
+    List<Memory> currentMemories = [];
+    if (currentState is MemoryLoaded) {
+      currentMemories = currentState.memories;
+    } else if (currentState is MemorySyncing) {
+      currentMemories = currentState.memories;
+    }
+
+    emit(MemorySyncing(memories: currentMemories));
     try {
       await syncMemories();
       final memories = await getMemories();
@@ -39,8 +47,8 @@ class MemoryBloc extends Bloc<MemoryEvent, MemoryState> {
     } catch (e) {
       emit(MemoryError('Sync failed: ${e.toString()}'));
       // Restore previous memories if they were loaded
-      if (currentState is MemoryLoaded) {
-        emit(MemoryLoaded(currentState.memories));
+      if (currentMemories.isNotEmpty) {
+        emit(MemoryLoaded(currentMemories));
       }
     }
   }
@@ -58,7 +66,8 @@ class MemoryBloc extends Bloc<MemoryEvent, MemoryState> {
   Future<void> _onAddMemory(AddMemory event, Emitter<MemoryState> emit) async {
     try {
       await saveMemory(event.memory);
-      add(LoadMemories());
+      final memories = await getMemories();
+      emit(MemoryLoaded(memories));
     } catch (e) {
       emit(MemoryError(e.toString()));
     }
@@ -67,7 +76,8 @@ class MemoryBloc extends Bloc<MemoryEvent, MemoryState> {
   Future<void> _onDeleteMemory(DeleteMemoryEvent event, Emitter<MemoryState> emit) async {
     try {
       await deleteMemory(event.id);
-      add(LoadMemories());
+      final memories = await getMemories();
+      emit(MemoryLoaded(memories));
     } catch (e) {
       emit(MemoryError(e.toString()));
     }
@@ -76,7 +86,8 @@ class MemoryBloc extends Bloc<MemoryEvent, MemoryState> {
   Future<void> _onToggleFavorite(ToggleFavoriteEvent event, Emitter<MemoryState> emit) async {
     try {
       await toggleFavorite(event.id, event.isFavorite);
-      add(LoadMemories());
+      final memories = await getMemories();
+      emit(MemoryLoaded(memories));
     } catch (e) {
       emit(MemoryError(e.toString()));
     }

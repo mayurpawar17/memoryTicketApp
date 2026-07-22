@@ -28,4 +28,10 @@ class MemoryError extends MemoryState {
   List<Object> get props => [message];
 }
 
-class MemorySyncing extends MemoryState {}
+class MemorySyncing extends MemoryState {
+  final List<Memory> memories;
+  const MemorySyncing({this.memories = const []});
+
+  @override
+  List<Object> get props => [memories];
+}

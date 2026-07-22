@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/colors/app_colors.dart';
+import '../../memory/domain/entities/memory.dart';
 import '../../memory/presentation/bloc/memory_bloc.dart';
 import '../../memory/presentation/bloc/memory_state.dart';
 import '../../memory/presentation/pages/new_memory_ticket_page.dart';
@@ -54,7 +56,17 @@ class _TimelinePage2State extends State<TimelinePage2> with TickerProviderStateM
           } else if (state is MemoryError) {
             return Center(child: Text(state.message));
           } else if (state is MemoryLoaded) {
-            final memories = state.memories;
+            final memories = List<Memory>.from(state.memories);
+            memories.sort((a, b) {
+              try {
+                final dateA = DateFormat('MMM dd yyyy, hh:mm a').parse(a.date);
+                final dateB = DateFormat('MMM dd yyyy, hh:mm a').parse(b.date);
+                return dateA.compareTo(dateB);
+              } catch (e) {
+                return 0;
+              }
+            });
+
             if (memories.isEmpty) {
               return _buildEmptyState(context);
             }
@@ -105,21 +117,7 @@ class _TimelinePage2State extends State<TimelinePage2> with TickerProviderStateM
                                 ),
                               ),
                               const SizedBox(height: 100),
-                              ...List.generate(memories.length, (index) {
-                                final animation = CurvedAnimation(
-                                  parent: _scrollController,
-                                  curve: Interval(
-                                    (index / memories.length) * 0.5,
-                                    ((index + 1) / memories.length).clamp(0, 1),
-                                    curve: Curves.easeOutCubic,
-                                  ),
-                                );
-                                return TimelineItem(
-                                  memory: memories[index],
-                                  index: index,
-                                  animation: animation,
-                                );
-                              }),
+                              ..._buildTimelineList(memories),
                               const SizedBox(height: 100),
                             ],
                           ),
@@ -130,7 +128,7 @@ class _TimelinePage2State extends State<TimelinePage2> with TickerProviderStateM
                 ),
                 Positioned(
                   top: 40,
-                  left: 20,
+                  left: 16,
                   child: IconButton(
                     icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
                     onPressed: () => Navigator.pop(context),
@@ -145,10 +143,70 @@ class _TimelinePage2State extends State<TimelinePage2> with TickerProviderStateM
     );
   }
 
+  List<Widget> _buildTimelineList(List<Memory> memories) {
+    List<Widget> children = [];
+    String? lastMonthYear;
+
+    for (int i = 0; i < memories.length; i++) {
+      final memory = memories[i];
+      String currentMonthYear = "";
+      try {
+        final date = DateFormat('MMM dd yyyy, hh:mm a').parse(memory.date);
+        currentMonthYear = DateFormat('MMMM yyyy').format(date);
+      } catch (e) {
+        currentMonthYear = "Unknown Date";
+      }
+
+      if (currentMonthYear != lastMonthYear) {
+        children.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 40.0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                currentMonthYear.toUpperCase(),
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                  letterSpacing: 2,
+                ),
+              ),
+            ),
+          ),
+        );
+        lastMonthYear = currentMonthYear;
+      }
+
+      final animation = CurvedAnimation(
+        parent: _scrollController,
+        curve: Interval(
+          (i / memories.length) * 0.5,
+          ((i + 1) / memories.length).clamp(0, 1),
+          curve: Curves.easeOutCubic,
+        ),
+      );
+
+      children.add(
+        TimelineItem(
+          memory: memory,
+          index: i,
+          animation: animation,
+        ),
+      );
+    }
+
+    return children;
+  }
+
   Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(40.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

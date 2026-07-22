@@ -17,7 +17,7 @@ abstract class AuthRepository {
   Future<void> logout();
 
   /// Sends a password reset email to the specified address.
-  Future<void> forgotPassword(String email);
+  // Future<void> forgotPassword(String email);
 
   /// Retrieves the currently authenticated user, if any.
   Future<UserEntity?> getCurrentUser();

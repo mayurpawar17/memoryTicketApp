@@ -9,7 +9,7 @@ abstract class AuthRemoteDataSource {
   Future<UserModel> register(String name, String email, String password);
   Future<UserModel> googleSignIn();
   Future<void> logout();
-  Future<void> forgotPassword(String email);
+  // Future<void> forgotPassword(String email);
   Future<UserModel?> getCurrentUser();
   Future<bool> isLoggedIn();
 }
@@ -141,6 +141,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
+/*
   @override
   Future<void> forgotPassword(String email) async {
     _logger.i('Sending password reset email to: $email', tag: _tag);
@@ -152,6 +153,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       rethrow;
     }
   }
+*/
 
   @override
   Future<UserModel?> getCurrentUser() async {

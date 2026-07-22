@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/data/datasources/auth_remote_data_source.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
-import 'features/auth/domain/usecases/forgot_password_usecase.dart';
+// import 'features/auth/domain/usecases/forgot_password_usecase.dart';
 import 'features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'features/auth/domain/usecases/google_login_usecase.dart';
 import 'features/auth/domain/usecases/is_logged_in_usecase.dart';
@@ -36,7 +36,7 @@ Future<void> init() async {
       registerUseCase: sl(),
       googleLoginUseCase: sl(),
       logoutUseCase: sl(),
-      forgotPasswordUseCase: sl(),
+      // forgotPasswordUseCase: sl(),
       getCurrentUserUseCase: sl(),
       isLoggedInUseCase: sl(),
     ),
@@ -47,7 +47,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
   sl.registerLazySingleton(() => GoogleLoginUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
-  sl.registerLazySingleton(() => ForgotPasswordUseCase(sl()));
+  // sl.registerLazySingleton(() => ForgotPasswordUseCase(sl()));
   sl.registerLazySingleton(() => GetCurrentUserUseCase(sl()));
   sl.registerLazySingleton(() => IsLoggedInUseCase(sl()));
 

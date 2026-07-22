@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,6 +29,7 @@ class NewMemoryTicketPage extends StatefulWidget {
 }
 
 class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
+  bool _isSaving = false;
   final List<TicketType> _ticketTypes = TicketType.values;
   int _selectedTypeIndex = TicketType.values.indexOf(TicketType.classicTicket);
   String? _imagePath;
@@ -38,6 +40,12 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
   final _locationController = TextEditingController();
   final _descriptionController = TextEditingController();
   String _selectedCategory = 'Travel';
+
+  @override
+  void initState() {
+    super.initState();
+    _dateController.text = DateFormat('MMM dd yyyy, hh:mm a').format(DateTime.now());
+  }
 
   @override
   void dispose() {
@@ -136,6 +144,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
   }
 
   void _saveMemory() {
+    if (_isSaving) return;
     List<String> missingFields = [];
     if (_imagePath == null) missingFields.add('Photo');
     if (_titleController.text.trim().isEmpty) missingFields.add('Title');
@@ -153,6 +162,12 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
       );
       return;
     }
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    HapticFeedback.mediumImpact();
 
     final memory = Memory(
       id: const Uuid().v4(),
@@ -175,7 +190,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
       appBar: CustomAppBar(title: "New Memory"),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -191,7 +206,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
 
               // --- FORM FIELDS BLOCK ---
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -214,7 +229,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
                             children: [
                               _buildFormLabel('DATE'),
                               _buildTextField(
-                                'mm/dd/yyyy',
+                                'mm/dd/yyyy, --:-- --',
                                 controller: _dateController,
                                 suffixIcon: Icons.calendar_today_outlined,
                                 onTap: () async {
@@ -225,8 +240,23 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
                                     lastDate: DateTime(2100),
                                   );
                                   if (date != null) {
-                                    _dateController.text =
-                                        DateFormat('MMM dd yyyy').format(date);
+                                    if (!mounted) return;
+                                    final time = await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.now(),
+                                    );
+                                    if (time != null) {
+                                      final dateTime = DateTime(
+                                        date.year,
+                                        date.month,
+                                        date.day,
+                                        time.hour,
+                                        time.minute,
+                                      );
+                                      _dateController.text =
+                                          DateFormat('MMM dd yyyy, hh:mm a')
+                                              .format(dateTime);
+                                    }
                                   }
                                 },
                               ),
@@ -274,7 +304,8 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
                                   'Nature',
                                   'Work',
                                   'Family',
-                                  'Pets'
+                                  'Pets',
+                                  'Personal'
                                 ],
                                 onChanged: (val) {
                                   if (val != null) {
@@ -319,6 +350,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
                         selected: isSelected,
                         onSelected: (selected) {
                           if (selected) {
+                            HapticFeedback.lightImpact();
                             setState(() => _selectedTypeIndex = index);
                           }
                         },
@@ -389,7 +421,7 @@ class _NewMemoryTicketPageState extends State<NewMemoryTicketPage> {
                           ? 'Home Sanctuary'
                           : _locationController.text,
                       date: _dateController.text.isEmpty
-                          ? DateFormat('MMM dd yyyy').format(DateTime.now())
+                          ? DateFormat('MMM dd yyyy, hh:mm a').format(DateTime.now())
                           : _dateController.text,
                       description: _descriptionController.text.isEmpty
                           ? 'A moment captured in time, waiting for its story to be told...'

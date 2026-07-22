@@ -10,6 +10,7 @@ class CategoryUtils {
     'Work': Icons.work_rounded,
     'Family': Icons.family_restroom_rounded,
     'Pets': Icons.pets_rounded,
+    'Personal': Icons.person_rounded,
   };
 
   static IconData getIcon(String category) {

@@ -63,7 +63,7 @@ class TimelineItem extends StatelessWidget {
 
   String _getYear(String date) {
     try {
-      final dateTime = DateFormat('MMM dd yyyy').parse(date);
+      final dateTime = DateFormat('MMM dd yyyy, hh:mm a').parse(date);
       return dateTime.year.toString();
     } catch (e) {
       return DateTime.now().year.toString();

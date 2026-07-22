@@ -63,7 +63,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             right: 0,
             child: Container(
               height: 56,
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -123,8 +123,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
           // --- Fixed Layout Platform Navigation Footer ---
           Positioned(
             bottom: bottomPadding + 32,
-            left: 20,
-            right: 20,
+            left: 16,
+            right: 16,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -229,7 +229,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   // --- HTML Asset View Component 1 ---
   Widget _buildScreenOne() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -312,7 +312,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   // --- HTML Asset View Component 2 (Bento Grid) ---
   Widget _buildScreenTwo() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -496,7 +496,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   // --- HTML Asset View Component 3 ---
   Widget _buildScreenThree() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
