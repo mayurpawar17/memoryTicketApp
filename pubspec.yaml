@@ -1,7 +1,7 @@
 name: memory_ticket_app
 description: "A Flutter application to preserve and manage your cherished memories as digital tickets."
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: ^3.12.0
