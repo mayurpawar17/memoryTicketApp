@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/colors/app_colors.dart';
@@ -386,17 +385,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         ),
                       ],
                     ),
-                    child: CachedNetworkImage(
-                      imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDK0_-csOP8prziLQAe5ypmJqwgmGYt7hDCQAchA31EybmEe6eKxHLOmtCqwZM8XwjX-623PQl0OrEzX93bsckSuPHxx2qpx2Iw4Ys9syy7Hi3FczJ4YWnLvB1eubbJvXie_TDh73GIpn3wIrygVjG4zPAMnSJuc86J1jEZxGCUpGrD10eCvgLLHkSZYjamnlAAo-DdHIeWgINLGTbLDPl9Kzh2EDHkAjydAlss5Ar7xHiQxU3LUOVcCA',
+                    child: Image.asset(
+                      'assets/onboardingImage2.jpg',
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: double.infinity,
-                      fadeInDuration: const Duration(milliseconds: 500),
-                      fadeOutDuration: const Duration(milliseconds: 300),
-                      placeholder: (context, url) => const Center(
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.black12),
-                      ),
                     ),
                   ),
                   Container(
@@ -511,17 +504,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(48),
-                  child: CachedNetworkImage(
-                    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBIgh2pln-Xear5r1dCf5hQ57GpGrJ80rqu278g6mchN8tQRSAbg1xVqJ8-dUD_WoK7mDKIsAZDxJBIJ1iTSPhsmKWNWB8szSXbGXlYPTEkxlOWc2yapUzHbXRrl4lUcCrRKsP4X8S-_g654uMIn-0aLVz4aVrn5y9qTRlzl0ch6UmCOh6CMtKH6qO4qs4HhQfIJM6Q2yg-U36zJHB-e5x-_uu6nYhJVctQLu16Rq4Gt7y5CwlwcDRbGA',
+                  child: Image.asset(
+                    'assets/onboadingImage3.jpg',
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,
-                    fadeInDuration: const Duration(milliseconds: 500),
-                    fadeOutDuration: const Duration(milliseconds: 300),
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.black12),
-                    ),
                   ),
                 ),
               ),
