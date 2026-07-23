@@ -68,7 +68,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Image.asset(
-                    'assets/memoryTicketLogo.png',
+                    'assets/memoryTicketIcon.png',
                     height: 32,
                     fit: BoxFit.contain,
                   ),
@@ -264,17 +264,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                     ),
                     Center(
-                      child: CachedNetworkImage(
-                        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC8EIVvtBFLRXVf9r9s59wptRMPsHlhO0vWBedJewW4i4IPfgUzI9whYEJ3tM4HP6Uh5xYwpUEf-UgEVhILAMJeMWbDwhPMBWUQQaMXHMlJrMTBwwUatpMwinlCe27anoeuNeKMxdx2F6UokexDfPVw1W0FOukBImIPxLYakH0rCXnBf55u1638O_F2IxI65j-07QjxQ08zf8bWqC9Xs26HCJM1K-PIQMJ2KbD644Xm3ejl2b7VjJDN5w',
+                      child: Image.asset(
+                        'assets/memoryTicketIcon.png',
                         fit: BoxFit.contain,
                         width: double.infinity,
                         height: double.infinity,
-                        fadeInDuration: const Duration(milliseconds: 500),
-                        fadeOutDuration: const Duration(milliseconds: 300),
-                        placeholder: (context, url) => const Center(
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.black12),
-                        ),
                       ),
                     ),
                   ],
